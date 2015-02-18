@@ -1,0 +1,14 @@
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\bin\Debug\TokenServer.exe.config
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\bin\Debug\TokenServer.exe
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\bin\Debug\TokenServer.pdb
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\bin\Debug\woxSerializer.dll
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\obj\Debug\TokenServer.csprojResolveAssemblyReference.cache
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\obj\Debug\MainWindow.baml
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\obj\Debug\MainWindow.g.cs
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\obj\Debug\App.g.cs
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\obj\Debug\TokenServer_MarkupCompile.cache
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\obj\Debug\TokenServer.g.resources
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\obj\Debug\TokenServer.Properties.Resources.resources
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\obj\Debug\TokenServer.csproj.GenerateResource.Cache
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\obj\Debug\TokenServer.exe
+D:\Angelin\Documents\Visual Studio 2013\Projects\DebitCardTokenization\DebitCardTokenization\TokenServer\obj\Debug\TokenServer.pdb
