@@ -12,14 +12,25 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Net.Sockets;
+using System.IO;
 
 namespace TokenClient
 {
     public partial class Client : Window
     {
+        private const string LOCALHOST = "127.0.0.1";
+        private const int PORT = 10000;
+
+        private TcpClient tcpClient;
+        private NetworkStream networkStream;
+        private BinaryReader reader;
+        private BinaryWriter writer;
+
         public Client()
         {
             InitializeComponent();
+            Connect();
         }
 
         private void DisplayMessage(object[] messageControlPair)
@@ -33,9 +44,88 @@ namespace TokenClient
                 box.Text += message;
             }
         }
+
+        private void LogIn(string username, string password)
+        {
+            writer.Write((int)Activity.LOGIN);
+            writer.Write(username);
+            writer.Write(password);
+
+            string returnedMessage = reader.ReadString();
+            txtUsername.Text = returnedMessage;
+        }
+        public enum AccessLevel
+        {
+            NONE = 0,
+            REGISTER = 1,
+            REQUEST = 2,
+            MASTER = 3
+        };
+        private void Register(string username, string password, AccessLevel access)
+        {
+            writer.Write((int)Activity.REGISTER);
+            writer.Write(username);
+            writer.Write(password);
+            writer.Write((int)access);
+
+            string returnedMessage = reader.ReadString();
+            MessageBox.Show(returnedMessage);
+        }
+
+        private void Connect()
+        {
+            try
+            {
+                tcpClient = new TcpClient();
+                tcpClient.Connect(LOCALHOST, PORT);
+
+                networkStream = tcpClient.GetStream();
+                reader = new BinaryReader(networkStream);
+                writer = new BinaryWriter(networkStream);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, "Fatal Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Environment.Exit(System.Environment.ExitCode);
+            }
+        }
+
         private void mainWindow_Closed(object sender, EventArgs e)
         {
             System.Environment.Exit(System.Environment.ExitCode);
+        }
+
+        private void chkIsRegister_Checked(object sender, RoutedEventArgs e)
+        {
+            lbxAccess.Visibility = Visibility.Visible;
+            btnLogin.Content = "Register";
+        }
+
+        private void chkIsRegister_Unchecked(object sender, RoutedEventArgs e)
+        {
+            lbxAccess.Visibility = Visibility.Hidden;
+            btnLogin.Content = "Login";
+        }
+
+        private enum Activity
+        {
+            REGISTER = 12000,
+            LOGIN = 14000,
+            REGISTER_TOKEN = 15000,
+            REQUEST_CARD = 16000
+        };
+
+        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            ListBoxItem selected = lbxAccess.SelectedValue as ListBoxItem;
+
+            if (selected != null)
+            {
+                if (chkIsRegister.IsChecked == true)
+                    Register(txtUsername.Text, txtPassword.Password, (AccessLevel)Convert.ToInt32(selected.Tag.ToString()));
+                else
+                    LogIn(txtUsername.Text, txtPassword.Password);
+            }
         }
     }
 }

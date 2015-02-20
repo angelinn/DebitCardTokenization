@@ -15,14 +15,14 @@ namespace TokenServer
         {
             get
             {
-                return ID;
+                return id;
             }
             set
             {
                 if (value != null)
-                    ID = value;
+                    id = value;
                 else
-                    ID = String.Empty;
+                    id = String.Empty;
             }
         }
 

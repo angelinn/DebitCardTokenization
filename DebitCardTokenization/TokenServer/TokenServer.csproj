@@ -58,10 +58,12 @@
     </ApplicationDefinition>
     <Compile Include="BankCard.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="ClientProcessor.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TokenException.cs" />
     <Compile Include="Tokenizer.cs" />
-    <Page Include="Server.xaml">
+    <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -69,8 +71,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Server.xaml.cs">
-      <DependentUpon>Server.xaml</DependentUpon>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

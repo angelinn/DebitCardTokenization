@@ -14,7 +14,7 @@ namespace TokenServer
         public string MakeToken(string ID)
         {
             if (!IsIDValid(ID))
-                throw new InvalidCardID(ID);
+                return null;
 
             string lastFourDigits = ID.Substring(ID.Length - 4, 4);
 
