@@ -19,9 +19,6 @@ using System.Net;
 
 namespace TokenServer
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class Server : Window
     {
         private Thread readThread;
@@ -39,10 +36,12 @@ namespace TokenServer
 
         public void Load()
         {
-            readThread = new Thread(new ThreadStart(RunServer));
-            readThread.Start();
             clients = new List<Client>();
             bankCards = new List<BankCard>();
+            tokenizer = new Tokenizer();
+
+            readThread = new Thread(new ThreadStart(RunServer));
+            readThread.Start();
             // deserialize data - Cards and Clients
         }
 
@@ -55,11 +54,12 @@ namespace TokenServer
                 listener = new TcpListener(localhost, 10000);
 
                 listener.Start();
+                DisplayMessage("Server loaded. Waiting for connection.");
 
                 while(true)
                 {
-                    DisplayMessage("Server loaded. Waiting for connection.");
                     ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessClient), listener.AcceptSocket());
+                    DisplayMessage("Connection received.");
                 }
             }
             catch(Exception e)
@@ -73,7 +73,7 @@ namespace TokenServer
             if (!Dispatcher.CheckAccess())
                 Dispatcher.Invoke(new Action<string>(DisplayMessage), message);
             else
-                txtDisplay.Text += (string)message;
+                txtDisplay.Text += (string)message + '\n';
         }
 
         private void ProcessClient(object socket)
@@ -86,33 +86,23 @@ namespace TokenServer
             BinaryReader reader = new BinaryReader(networkStream);
             BinaryWriter writer = new BinaryWriter(networkStream);
 
-            Activity response;
-            
-            response = (Activity)reader.ReadInt32();
-
-            if (response == Activity.REGISTER)
-                RegisterClient(reader, writer, currentSocket);
-            else if (response == Activity.LOGIN)
-                LogClientIn(reader, writer, currentSocket);
-            else
-                throw new InvalidDataException();
-
-            do
+            try
             {
-                response = (Activity)reader.ReadInt32();
+                Client client = DetermineLogin(reader, writer, currentSocket);
 
-                if (response == Activity.REQUEST_CARD)
+                while(currentSocket.Connected)
                 {
-
+                    try
+                    {
+                        ProcessRequest(client, reader, writer, currentSocket);
+                    }
+                    catch()
                 }
-                else if (response == Activity.REQUEST_TOKEN)
-                {
-
-                }
-            } while (currentSocket.Connected);
-
-
-
+            }
+            catch (Exception e)
+            {
+                DisplayMessage(e.Message);
+            }
 
             reader.Close();
             writer.Close();
@@ -120,7 +110,84 @@ namespace TokenServer
             currentSocket.Close();
         }
 
-        private void RegisterClient(BinaryReader reader, BinaryWriter writer, Socket socket)
+        private class ClientProcessor
+        {
+            private Socket currentSocket;
+            private BinaryReader reader;
+            private BinaryWriter writer;
+            private Client client;
+
+            public void Process(object socket)
+            {
+
+            }
+
+
+        }
+
+        private Client DetermineLogin(BinaryReader reader, BinaryWriter writer, Socket socket)
+        {
+            Activity response = (Activity)reader.ReadInt32();
+
+            if (response == Activity.REGISTER)
+                return RegisterClient(reader, writer, socket);
+
+            if (response == Activity.LOGIN)
+                return LogClientIn(reader, writer, socket);
+      
+            throw new InvalidDataException();
+        }
+
+        private void ProcessRequest(Client client, BinaryReader reader, BinaryWriter writer, Socket socket)
+        {
+            Activity response = (Activity)reader.ReadInt32();
+            string ID = null;
+            string token = null;
+
+            if (response == Activity.REQUEST_CARD)
+            {
+                if (client.Access != AccessLevel.REQUEST)
+                {
+                    writer.Write("You cannot request ID of a card.");
+                    return;
+                }
+
+                token = reader.ReadString();
+                ID = RequestCardID(token);
+
+                string returnMessage = ID == null ? "There's no ID associated to this token." : ID;
+                writer.Write(returnMessage);
+            }
+            else if (response == Activity.REGISTER_TOKEN)
+            {
+                if (client.Access != AccessLevel.REGISTER)
+                {
+                    writer.Write("You cannot register tokens for a card.");
+                    return;
+                }
+
+                ID = reader.ReadString();
+                if((token = tokenizer.MakeToken(ID)) == null)
+                {
+                    writer.Write("The ID of the card is not valid.");
+                    return;
+                }
+
+                writer.Write(token);
+            }
+        }
+
+        private string RequestCardID(string token)
+        {
+            foreach(BankCard card in bankCards)
+            {
+                if (card.Tokens.Any(tk => tk.ID == token))
+                    return card.ID;
+            }
+            return null;
+        }
+
+        private Client RegisterClient(BinaryReader reader, BinaryWriter writer, Socket socket)
         {
             string username = String.Empty;
             string password = String.Empty;
@@ -135,32 +202,43 @@ namespace TokenServer
                 if (clients.Any(cl => cl.Username == username))
                     writer.Write("Username already exists!");
                 else
+                {
+                    writer.Write("200");
                     break;
+                }
             }
-
-            clients.Add(new Client(username.Trim(), password.Trim(), (AccessLevel)Convert.ToInt32(access)));
+            Client current = new Client(username.Trim(), password.Trim(), (AccessLevel)Convert.ToInt32(access));
+            clients.Add(current);
             DisplayMessage(String.Format("{0} has registered successfully.", username));
+
+            return current;
         }
 
-        private void LogClientIn(BinaryReader reader, BinaryWriter writer, Socket socket)
+        private Client LogClientIn(BinaryReader reader, BinaryWriter writer, Socket socket)
         {
             string username = String.Empty;
             string password = String.Empty;
+            Client current = null;
 
             while (socket.Connected)
             {
                 try
                 {
-                    clients.Single(cl => cl.Username == username && cl.Password == password);
+                    username = reader.ReadString();
+                    password = reader.ReadString();
+                    current = clients.Single(cl => cl.Username == username && cl.Password == password);
                 }
                 catch (InvalidOperationException)
                 {
                     writer.Write("Username or Password was incorrect.");
                     continue;
                 }
+
+                writer.Write("200");
                 break;
             }
             DisplayMessage(String.Format("{0} has logged in.", username));
+            return current;
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -172,7 +250,7 @@ namespace TokenServer
         {
             REGISTER = 12000,
             LOGIN = 14000,
-            REQUEST_TOKEN = 15000,
+            REGISTER_TOKEN = 15000,
             REQUEST_CARD = 16000
         };
     }
