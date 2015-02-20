@@ -1,12 +1,13 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:LoginUserControl="clr-namespace:LoginUserControl;assembly=LoginUserControl" x:Name="mainWindow" x:Class="TokenClient.Client"
+        xmlns:LoginUserControl="clr-namespace:LoginUserControl;assembly=LoginUserControl" xmlns:TokenProcessorUserControl="clr-namespace:TokenProcessorUserControl;assembly=TokenProcessorUserControl" x:Name="mainWindow" x:Class="TokenClient.Client"
         Title="Tokenization System" Height="350" Width="525" Closed="mainWindow_Closed">
     <Grid>
 
 
         <LoginUserControl:LoginUserControl x:Name="ucLogin" HorizontalAlignment="Left" Margin="43,10,0,0" VerticalAlignment="Top" Login="ucLogin_Login" Register="ucLogin_Register"/>
+        <TokenProcessorUserControl:TokenProcessorUserControl x:Name="ucRequest" Visibility="Hidden" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" TokenRequested="ucRequest_TokenRequested" CardIDRequested="ucRequest_CardIDRequested"/>
 
 
     </Grid>

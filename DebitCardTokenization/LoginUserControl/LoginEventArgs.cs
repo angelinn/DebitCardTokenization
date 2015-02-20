@@ -11,9 +11,9 @@ namespace LoginUserControl
     {
         public string Username { get; set; }
         public string Password { get; set; }
-        public string ListBoxMarked { get; set; }
+        public int ListBoxMarked { get; set; }
 
-        public LoginEventArgs(string un, string pw, string lbItem)
+        public LoginEventArgs(string un, string pw, int lbItem)
         {
             Username = un;
             Password = pw;

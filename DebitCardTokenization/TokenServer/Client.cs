@@ -4,17 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
+using Tokenization.Access;
 
 namespace TokenServer
 {
-    public enum AccessLevel
-    {
-        NONE = 0,
-        REGISTER = 1,
-        REQUEST = 2,
-        MASTER = 3
-    };
-
     public class Client
     {
         private string username;

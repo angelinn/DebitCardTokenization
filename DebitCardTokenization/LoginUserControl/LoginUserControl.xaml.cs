@@ -49,12 +49,23 @@ namespace LoginUserControl
             }
         }
 
-        public string ListBoxMarked
+        public enum AccessLevel
+        {
+            NONE = 0,
+            REGISTER = 1,
+            REQUEST = 2,
+            MASTER = 3
+        };
+
+        public int ListBoxMarked
         {
             get
             {
                 ListBoxItem current = lbxAccess.SelectedItem as ListBoxItem;
-                return current.Tag.ToString();
+                if (current == null)
+                    return -1;
+                
+                return Convert.ToInt32(current.Tag.ToString());
             }
         }
 

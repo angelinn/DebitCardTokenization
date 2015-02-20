@@ -44,6 +44,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Tokenization">
+      <HintPath>..\Tokenization\bin\Debug\Tokenization.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -97,6 +100,10 @@
     <ProjectReference Include="..\LoginUserControl\LoginUserControl.csproj">
       <Project>{E474A08D-470C-4F29-A2DB-D75C7769CEFB}</Project>
       <Name>LoginUserControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TokenProcessorUserControl\TokenProcessorUserControl.csproj">
+      <Project>{4AC94F9D-837F-4C48-AE70-A33321C0E565}</Project>
+      <Name>TokenProcessorUserControl</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

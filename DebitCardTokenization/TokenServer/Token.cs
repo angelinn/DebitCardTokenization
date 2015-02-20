@@ -38,5 +38,10 @@ namespace TokenServer
                     owner = value;
             }
         }
+
+        public Token(string numbers)
+        {
+            ID = numbers;
+        }
     }
 }

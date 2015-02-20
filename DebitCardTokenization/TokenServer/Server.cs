@@ -18,6 +18,7 @@ namespace TokenServer
         private Tokenizer tokenizer;
         private Action<object> DisplayMethod;
         private Action<object> DisplayError;
+
         //private List<Token> tokens; Needed in Sorted token output
 
         public Server(Action<object> message, Action<object> error)
@@ -52,7 +53,7 @@ namespace TokenServer
                 while (true)
                 {
                     ThreadPool.QueueUserWorkItem(new WaitCallback(new ClientProcessor(
-                                                 DisplayMethod, DisplayError, clients, bankCards).Process),
+                                                 DisplayMethod, clients, bankCards).Process),
                                                  listener.AcceptSocket());
 
                     DisplayMethod("Connection received.");

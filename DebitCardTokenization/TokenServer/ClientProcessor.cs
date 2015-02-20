@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.IO;
 using System.Net;
+using Tokenization.Access;
+using Tokenization.Activities;
 
 namespace TokenServer
 {
@@ -20,15 +22,21 @@ namespace TokenServer
         private List<Client> clientsRef;
         private List<BankCard> bankCardsRef;
         private Action<object> DisplayMethod;
-        private Action<object> DisplayError;
         
 
-        public ClientProcessor(Action<object> message, Action<object> error, List<Client> clients, List<BankCard> cards)
+        public ClientProcessor(Action<object> message, List<Client> clients, List<BankCard> cards)
         {
             DisplayMethod = message;
-            DisplayError = error;
             clientsRef = clients;
             bankCardsRef = cards;
+        }
+
+        private void AddToList<T>(List<T> list, T item)
+        {
+            lock (this)
+            {
+                list.Add(item);
+            }
         }
 
         public void Process(object socket)
@@ -40,26 +48,28 @@ namespace TokenServer
             networkStream = new NetworkStream(currentSocket);
             reader = new BinaryReader(networkStream);
             writer = new BinaryWriter(networkStream);
+            tokenizer = new Tokenizer();
 
             try
             {
-                client = DetermineLogin();
-
-                while(currentSocket.Connected)
-                {
-                    try
-                    {
-                        ProcessRequest();
-                    }
-                    catch(Exception e)
-                    {
-                        DisplayMethod(e.Message);
-                    }
-                }
+                while (client == null && currentSocket.Connected)
+                    client = DetermineLogin();
             }
             catch (Exception e)
             {
-                DisplayError(e.Message);
+                DisplayMethod(e.Message);
+            }
+
+            while(currentSocket.Connected)
+            {
+                try
+                {
+                    ProcessRequest();
+                }
+                catch(Exception e)
+                {
+                    DisplayMethod(e.Message);
+                }
             }
 
             reader.Close();
@@ -89,7 +99,7 @@ namespace TokenServer
 
             if (response == Activity.REQUEST_CARD)
             {
-                if (client.Access != AccessLevel.REQUEST)
+                if (client.Access < AccessLevel.REQUEST)
                 {
                     writer.Write("You cannot request ID of a card.");
                     return;
@@ -100,10 +110,11 @@ namespace TokenServer
 
                 string returnMessage = ID == null ? "There's no ID associated to this token." : ID;
                 writer.Write(returnMessage);
+                DisplayMethod(String.Format("{0} requested {1}", client.Username, returnMessage));
             }
             else if (response == Activity.REGISTER_TOKEN)
             {
-                if (client.Access != AccessLevel.REGISTER)
+                if (client.Access < AccessLevel.REGISTER)
                 {
                     writer.Write("You cannot register tokens for a card.");
                     return;
@@ -116,7 +127,9 @@ namespace TokenServer
                     return;
                 }
 
+                AddToList<BankCard>(bankCardsRef, new BankCard(ID, new Token(token)));
                 writer.Write(token);
+                DisplayMethod(String.Format("{0} created Token {1}", client.Username, token));
             }
         }
 
@@ -136,22 +149,19 @@ namespace TokenServer
             string password = String.Empty;
             AccessLevel access = AccessLevel.NONE;
 
-            while (currentSocket.Connected)
-            {
-                username = reader.ReadString();
-                password = reader.ReadString();
-                access = (AccessLevel)reader.ReadInt32();
+            username = reader.ReadString();
+            password = reader.ReadString();
+            access = (AccessLevel)reader.ReadInt32();
 
-                if (clientsRef.Any(cl => cl.Username == username))
-                    writer.Write("Username already exists!");
-                else
-                {
-                    writer.Write("200");
-                    break;
-                }
+            if (clientsRef.Any(cl => cl.Username == username))
+            {
+                writer.Write("Username already exists!");
+                return null;
             }
+            
+            writer.Write("200");
             Client current = new Client(username.Trim(), password.Trim(), (AccessLevel)Convert.ToInt32(access));
-            clientsRef.Add(current);
+            AddToList<Client>(clientsRef, current);
             DisplayMethod(String.Format("{0} has registered successfully.", username));
 
             return current;
@@ -163,33 +173,21 @@ namespace TokenServer
             string password = String.Empty;
             Client current = null;
 
-            while (currentSocket.Connected)
+            try
             {
-                try
-                {
-                    username = reader.ReadString();
-                    password = reader.ReadString();
-                    current = clientsRef.Single(cl => cl.Username == username && cl.Password == password);
-                }
-                catch (InvalidOperationException)
-                {
-                    writer.Write("Username or Password was incorrect.");
-                    continue;
-                }
+                username = reader.ReadString();
+                password = reader.ReadString();
+                current = clientsRef.Single(cl => cl.Username == username && cl.Password == password);
 
-                writer.Write("200");
-                break;
+                writer.Write(String.Format("Welcome back, {0}!", client.Username));
+                DisplayMethod(String.Format("{0} has logged in.", username));
             }
-            DisplayMethod(String.Format("{0} has logged in.", username));
+            catch (InvalidOperationException)
+            {
+                writer.Write("Username or Password was incorrect.");
+            }
+
             return current;
         }
     }
-
-    public enum Activity
-    {
-        REGISTER = 12000,
-        LOGIN = 14000,
-        REGISTER_TOKEN = 15000,
-        REQUEST_CARD = 16000
-    };
 }

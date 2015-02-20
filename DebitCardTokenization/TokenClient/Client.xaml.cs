@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Net.Sockets;
 using System.IO;
+using Tokenization.Activities;
+using Tokenization.Access;
 
 namespace TokenClient
 {
@@ -26,42 +28,39 @@ namespace TokenClient
         private NetworkStream networkStream;
         private BinaryReader reader;
         private BinaryWriter writer;
-
+        
         public Client()
         {
             InitializeComponent();
             Connect();
         }
 
-        private void DisplayMessage(object[] messageControlPair)
+        private void DisplayMessage(object message)
         {
             if (!Dispatcher.CheckAccess())
-                Dispatcher.Invoke(new Action<object[]>(DisplayMessage), messageControlPair);
+                Dispatcher.Invoke(new Action<string>(DisplayMessage), message);
             else
             {
-                TextBox box = messageControlPair[1] as TextBox;
-                string message = messageControlPair[0] as string;
-                box.Text += message;
+                ucRequest.Result = (string)message;
             }
         }
 
-        private void LogIn(string username, string password)
+        private bool LogIn(string username, string password)
         {
             writer.Write((int)Activity.LOGIN);
             writer.Write(username);
             writer.Write(password);
 
             string returnedMessage = reader.ReadString();
+
+            if (returnedMessage == "200")
+                return true;
+
             MessageBox.Show(returnedMessage);
+            return false;
         }
-        public enum AccessLevel
-        {
-            NONE = 0,
-            REGISTER = 1,
-            REQUEST = 2,
-            MASTER = 3
-        };
-        private void Register(string username, string password, AccessLevel access)
+
+        private bool Register(string username, string password, AccessLevel access)
         {
             writer.Write((int)Activity.REGISTER);
             writer.Write(username);
@@ -69,7 +68,11 @@ namespace TokenClient
             writer.Write((int)access);
 
             string returnedMessage = reader.ReadString();
+            if (returnedMessage == "200")
+                return true;
+
             MessageBox.Show(returnedMessage);
+            return false;
         }
 
         private void Connect()
@@ -95,24 +98,47 @@ namespace TokenClient
             System.Environment.Exit(System.Environment.ExitCode);
         }
 
-        private enum Activity
-        {
-            REGISTER = 12000,
-            LOGIN = 14000,
-            REGISTER_TOKEN = 15000,
-            REQUEST_CARD = 16000
-        };
-
         private void ucLogin_Login(object sender, LoginUserControl.LoginEventArgs args)
         {
-            LogIn(args.Username, args.Password);
+            if(LogIn(args.Username, args.Password))
+                ShowRequestUC();
         }
 
         private void ucLogin_Register(object sender, LoginUserControl.LoginEventArgs args)
         {
-            Register(args.Username, args.Password, (AccessLevel)args.ListBoxMarked);
+            if(Register(args.Username, args.Password, (AccessLevel)args.ListBoxMarked))
+                ShowRequestUC();
         }
 
+        private void RequestToken(string from)
+        {
+            writer.Write((int)Activity.REGISTER_TOKEN);
+            writer.Write(from);
+            DisplayMessage(reader.ReadString());
+        }
+
+        private void RequestCardID(string from)
+        {
+            writer.Write((int)Activity.REQUEST_CARD);
+            writer.Write(from);
+            DisplayMessage(reader.ReadString());
+        }
+
+        private void ShowRequestUC()
+        {
+            ucLogin.Visibility = Visibility.Hidden;
+            ucRequest.Visibility = Visibility.Visible;
+        }
+
+        private void ucRequest_TokenRequested(object sender, TokenProcessorUserControl.GenerateEventArgs args)
+        {
+            RequestToken(args.From);
+        }
+
+        private void ucRequest_CardIDRequested(object sender, TokenProcessorUserControl.GenerateEventArgs args)
+        {
+            RequestCardID(args.From);
+        }
 
     }
 }
