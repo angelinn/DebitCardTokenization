@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="TokenProcessorUserControl.TokenProcessorUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="450">
+    <Grid>
+        <TextBox x:Name="txtRequest" HorizontalAlignment="Left" Height="23" Margin="106,79,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="250"/>
+        <TextBox x:Name="txtResult" HorizontalAlignment="Left" Height="23" Margin="106,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="250"/>
+        <Button x:Name="btnToken" Content="Generate Token" HorizontalAlignment="Left" Margin="106,228,0,0" VerticalAlignment="Top" Width="98" Click="btnToken_Click"/>
+        <Button x:Name="btnID" Content="Generate ID" HorizontalAlignment="Left" Margin="261,228,0,0" VerticalAlignment="Top" Width="95" Click="btnID_Click"/>
+
+    </Grid>
+</UserControl>
