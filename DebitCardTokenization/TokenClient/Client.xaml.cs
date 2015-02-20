@@ -52,7 +52,7 @@ namespace TokenClient
             writer.Write(password);
 
             string returnedMessage = reader.ReadString();
-            txtUsername.Text = returnedMessage;
+            MessageBox.Show(returnedMessage);
         }
         public enum AccessLevel
         {
@@ -95,18 +95,6 @@ namespace TokenClient
             System.Environment.Exit(System.Environment.ExitCode);
         }
 
-        private void chkIsRegister_Checked(object sender, RoutedEventArgs e)
-        {
-            lbxAccess.Visibility = Visibility.Visible;
-            btnLogin.Content = "Register";
-        }
-
-        private void chkIsRegister_Unchecked(object sender, RoutedEventArgs e)
-        {
-            lbxAccess.Visibility = Visibility.Hidden;
-            btnLogin.Content = "Login";
-        }
-
         private enum Activity
         {
             REGISTER = 12000,
@@ -115,17 +103,16 @@ namespace TokenClient
             REQUEST_CARD = 16000
         };
 
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        private void ucLogin_Login(object sender, LoginUserControl.LoginEventArgs args)
         {
-            ListBoxItem selected = lbxAccess.SelectedValue as ListBoxItem;
-
-            if (selected != null)
-            {
-                if (chkIsRegister.IsChecked == true)
-                    Register(txtUsername.Text, txtPassword.Password, (AccessLevel)Convert.ToInt32(selected.Tag.ToString()));
-                else
-                    LogIn(txtUsername.Text, txtPassword.Password);
-            }
+            LogIn(args.Username, args.Password);
         }
+
+        private void ucLogin_Register(object sender, LoginUserControl.LoginEventArgs args)
+        {
+            Register(args.Username, args.Password, (AccessLevel)args.ListBoxMarked);
+        }
+
+
     }
 }
