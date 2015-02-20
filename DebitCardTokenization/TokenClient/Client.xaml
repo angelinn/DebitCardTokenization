@@ -1,0 +1,18 @@
+﻿<Window x:Name="mainWindow" x:Class="TokenClient.Client"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Tokenization System" Height="350" Width="525">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="66*"/>
+            <RowDefinition Height="164*"/>
+            <RowDefinition Height="89*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="lblTitle" Content="Card Tokenization System" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25" FontFamily="Georgia"/>
+        <TextBox HorizontalAlignment="Left" Height="34" Margin="229,41,0,0" Grid.Row="1" VerticalAlignment="Top" Width="161"/>
+        <PasswordBox HorizontalAlignment="Left" Height="34" Margin="229,100,0,0" Grid.Row="1" VerticalAlignment="Top" Width="161"/>
+        <Label x:Name="txtUsername" Content="Username" Margin="108,41,328,89" Grid.Row="1" FontSize="16"/>
+        <Label x:Name="txtPassword" Content="Password" Margin="108,100,328,30" Grid.Row="1" FontSize="16"/>
+       
+    </Grid>
+</Window>
