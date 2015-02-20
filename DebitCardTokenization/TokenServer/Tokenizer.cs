@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using wox;
 
 namespace TokenServer
 {
@@ -57,7 +56,7 @@ namespace TokenServer
             while (!correctStart)
             {
                 rand = random.Next(1, 10);
-
+                
                 if (rand != Convert.ToInt32(c.ToString()))
                 {
                     correctStart = true;

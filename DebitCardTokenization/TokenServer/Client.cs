@@ -3,15 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace TokenServer
 {
+    public enum AccessLevel
+    {
+        NONE = 0,
+        REGISTER = 1,
+        REQUEST = 2,
+        MASTER = 3
+    };
+
     public class Client
     {
         private string username;
         private string password;
-        private string cardID;
-        private string cardToken;
+        private AccessLevel access;
 
         public string Username
         {
@@ -23,6 +31,8 @@ namespace TokenServer
             {
                 if (value != null)
                     username = value;
+                else
+                    username = String.Empty;
             }
         }
         public string Password
@@ -34,48 +44,38 @@ namespace TokenServer
             set
             {
                 if (value != null)
-                    password = value;
+                    password = value; // Needs hash
+                else
+                    password = String.Empty;
             }
         }
 
-        public string CardID
+        public AccessLevel Access
         {
             get
             {
-                return cardID;
+                return access;
             }
             set
             {
-                if (value != null)
-                    cardID = value;
+                if (value >= AccessLevel.NONE && value <= AccessLevel.MASTER)
+                    access = value;
+                else
+                    access = AccessLevel.NONE;
             }
         }
 
-        public string CardToken
-        {
-            get
-            {
-                return cardToken;
-            }
-            set
-            {
-                if (value != null)
-                    cardToken = value;
-            }
-        }
-
-        public Client(string un, string pw, string id, string token)
+        public Client(string un, string pw, AccessLevel level)
         {
             Username = un;
             Password = pw;
-            CardID = id;
-            CardToken = token;
+            Access = level;
         }
 
-        public Client() : this(String.Empty, String.Empty, String.Empty, String.Empty)
+        public Client() : this(String.Empty, String.Empty, AccessLevel.NONE)
         {   }
 
-        public Client(Client other) : this(other.Username, other.Password, other.CardID, other.CardToken)
+        public Client(Client other) : this(other.Username, other.Password, other.Access)
         {   }
 
     }
