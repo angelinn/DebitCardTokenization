@@ -8,10 +8,12 @@ namespace Tokenization
 {
     namespace Consts
     {
+        // Class that holds the constants for the solution
         public static class Constants
         {
             public const string LOCALHOST = "127.0.0.1";
             public const int PORT = 10000;
+            public const int VALID_CARD_LENGTH = 16;
             public const string LOGIN_SUCCESSFUL = "Welcome";
             public const string REGISTER_SUCCESSFUL = "Registration";
             public const string INVALID_CARD_ID = "The ID of the card is not valid.";

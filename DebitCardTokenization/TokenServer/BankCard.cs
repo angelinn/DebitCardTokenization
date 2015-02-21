@@ -8,6 +8,7 @@ namespace TokenServer
 {
     public class BankCard
     {
+        // A BankCard has its ID and a List of its registered tokens
         private string id;
         private List<Token> tokens;
 
@@ -39,16 +40,19 @@ namespace TokenServer
             }
         }
 
+        // Constructor, that accepts an ID and a single Token to add to the list
         public BankCard(string num, Token token)
         {
             Tokens = new List<Token>();
             ID = num;
             Tokens.Add(token);
         }
-            
+        
+        // Default c-tor
         public BankCard() : this(String.Empty, new Token())
         {   }
         
+        // Copy c-tor, we don't want it to be accessed
         private BankCard(BankCard other)
         {   }
     }

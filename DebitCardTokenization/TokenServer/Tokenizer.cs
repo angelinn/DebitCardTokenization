@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tokenization.Consts;
 
 namespace TokenServer
 {
     public static class Tokenizer
     {
-        // 369345657653147
+        // Main function that starts the tokenization
         public static string MakeToken(string ID)
         {
             if (!IsIDValid(ID))
@@ -19,6 +20,7 @@ namespace TokenServer
             return BuildToken(ID) + lastFourDigits;
         }
 
+        // Creates the new token
         private static string BuildToken(string ID)
         {
             int[] token = new int[ID.Length - 4];
@@ -46,6 +48,7 @@ namespace TokenServer
             return new string(result);
         }
 
+        // Generates a number that isnt equal to the given char
         private static int GenerateCorrectNumber(char c, Random random)
         {
             int rand = 0;
@@ -58,11 +61,15 @@ namespace TokenServer
             return rand;
         }
 
+        // Checks if a given Card ID is valid
         private static bool IsIDValid(string ID)
         {
-            return !IsNewStartDigitValid(Convert.ToInt32(ID[0].ToString())) && LuhnTest(ID);
+            return ID.Length != Constants.VALID_CARD_LENGTH && 
+                   !IsNewStartDigitValid(Convert.ToInt32(ID[0].ToString())) && 
+                   LuhnTest(ID);
         }
 
+        // Runs a test using the Luhn Algorithm for validation
         private static bool LuhnTest(string ID)
         {
             int[] numberArray = new int[ID.Length];
@@ -85,6 +92,7 @@ namespace TokenServer
             return (sum % 10 == 0);
         }
 
+        // Generates a digit that isn't equal to 3, 4, 5 or 6
         private static bool IsNewStartDigitValid(int digit)
         {
             return (digit != 3 && digit != 4 && digit != 5 && digit != 6);

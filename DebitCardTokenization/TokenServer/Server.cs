@@ -14,12 +14,14 @@ namespace TokenServer
 {
     public class Server
     {
+        // Class represeting the Server
         private Thread readThread;
         private List<User> clients;
         private List<BankCard> bankCards;
         private Action<object> DisplayMethod;
         private Action<object> DisplayError;
 
+        // C-tor, that accepts two actions, so the server can write to the UI
         public Server(Action<object> message, Action<object> error)
         {
             DisplayMethod = message;
@@ -27,11 +29,13 @@ namespace TokenServer
             Load();
         }
 
+        // Destructor, Serializes the data
         ~Server()
         {
             Serialize();
         }
 
+        // Loads the data upon startup and starts the read thread
         public void Load()
         {
             clients = new List<User>();
@@ -42,6 +46,7 @@ namespace TokenServer
             Deserialize();
         }
 
+        // Main method, Distributes Threads to the new connections
         private void RunServer()
         {
             TcpListener listener;
@@ -68,6 +73,8 @@ namespace TokenServer
             }
         }
 
+        // Serializes the card and user lists to XML files
+        // The files are defined in the Constants class
         public void Serialize()
         {
             try
@@ -88,6 +95,8 @@ namespace TokenServer
             }
         }
 
+        // Deserializes the card and user lists to XML files
+        // The files are defined in the Constants class
         private void Deserialize()
         {
             try
@@ -114,6 +123,8 @@ namespace TokenServer
             }
         }
 
+        // Exports all Card <-> Token pairs to a text file, sorted by Card ID
+        // Accepts an Action that opens the SaveFileDialog from the UI Thread
         public void ExportSortedByCard(Action<object> DialogShower)
         {
             System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog();
@@ -133,6 +144,8 @@ namespace TokenServer
             
         }
 
+        // Exports all Token <-> Card pairs to a text file, sorted by Token ID
+        // Accepts an Action that opens the SaveFileDialog from the UI Thread
         public void ExportSortedByToken(Action<object> DialogShower)
         {
             System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog();

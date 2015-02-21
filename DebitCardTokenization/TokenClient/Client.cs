@@ -21,6 +21,7 @@ namespace TokenClient
         private Action<object> DisplayMessage;
         private Action<object> DisplayBox;
 
+        // Accepts 2 Actions, so the class can write to the UI
         public Client(Action<object> DisplayM, Action<object> Box)
         {
             DisplayMessage = DisplayM;
@@ -28,6 +29,7 @@ namespace TokenClient
             Connect();
         }
 
+        // Requests a token from the server
         public void RequestToken(string from)
         {
             writer.Write((int)Activity.REGISTER_TOKEN);
@@ -35,6 +37,7 @@ namespace TokenClient
             DisplayMessage(reader.ReadString());
         }
 
+        // Requests card ID from the server
         public void RequestCardID(string from)
         {
             writer.Write((int)Activity.REQUEST_CARD);
@@ -42,6 +45,7 @@ namespace TokenClient
             DisplayMessage(reader.ReadString());
         }
 
+        // Connects to the server
         private void Connect()
         {
             try
@@ -60,11 +64,17 @@ namespace TokenClient
             }
         }
 
+        // Username validation
+        // Username must be between 6 and 20 characters
+        // Username can contain letters and numbers, dots and underscores
+        // Dot and underscore cannot be next to each other
+        // Username must not start or end with a dot or underscore
         public bool IsUsernameValid(string username)
         {
             return Regex.Match(username, "^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$").Success;
         }
 
+        // Sends a registration request to the server
         public bool Register(string username, string password, AccessLevel access)
         {
             writer.Write((int)Activity.REGISTER);
@@ -81,6 +91,7 @@ namespace TokenClient
             return false;
         }
 
+        // Sends a login request to the server
         public bool LogIn(string username, string password)
         {
             writer.Write((int)Activity.LOGIN);

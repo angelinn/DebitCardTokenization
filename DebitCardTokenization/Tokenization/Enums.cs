@@ -8,6 +8,7 @@ namespace Tokenization
 {
     namespace Access
     {
+        // Holds the AccessLevels for the users
         public enum AccessLevel
         {
             NONE = 0,
@@ -19,6 +20,8 @@ namespace Tokenization
 
     namespace Activities
     {
+        // Holds the Activities that users can prompt from the server
+        // e.g Register an account, Login, Request Token and Request Card ID
         public enum Activity
         {
             REGISTER = 12000,

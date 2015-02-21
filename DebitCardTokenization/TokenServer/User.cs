@@ -10,6 +10,8 @@ namespace TokenServer
 {
     public class User
     {
+        // Class that represents a User in the system
+        // The user has a Username, Password and AccessLevel
         private string username;
         private string password;
         private AccessLevel access;
@@ -58,6 +60,7 @@ namespace TokenServer
             }
         }
 
+        // General purpose c-tor
         public User(string un, string pw, AccessLevel level)
         {
             Username = un;
@@ -65,9 +68,11 @@ namespace TokenServer
             Access = level;
         }
 
+        // Default c-tor
         public User() : this(String.Empty, String.Empty, AccessLevel.NONE)
         {   }
 
+        // Copy c-tor
         public User(User other) : this(other.Username, other.Password, other.Access)
         {   }
 
