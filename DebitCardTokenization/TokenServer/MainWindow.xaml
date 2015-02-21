@@ -7,7 +7,7 @@
             <RowDefinition Height="25*"/>
             <RowDefinition Height="4*"/>
         </Grid.RowDefinitions>
-        <TextBox x:Name="txtDisplay" IsReadOnly="True" TextWrapping="Wrap" Width="497" Margin="0"/>
+        <TextBox x:Name="txtDisplay" IsReadOnly="True" TextWrapping="Wrap" Width="497" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
         <Button x:Name="btnExportCardID" Content="Export By CardID" HorizontalAlignment="Left" Margin="10,2.561,0,0" VerticalAlignment="Top" Width="107" Click="btnExportCardID_Click" Grid.Row="1"/>
         <Button x:Name="btnExportToken" Content="Export By Token" HorizontalAlignment="Left" Margin="198,2.561,0,0" VerticalAlignment="Top" Width="107" Click="btnExportToken_Click" Grid.Row="1"/>
         <Button x:Name="btnSerialize" Content="Serialize" HorizontalAlignment="Left" Margin="400,2.561,0,0" VerticalAlignment="Top" Width="107" Click="btnSerialize_Click" Grid.Row="1"/>

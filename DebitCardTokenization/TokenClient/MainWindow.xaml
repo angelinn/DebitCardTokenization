@@ -5,8 +5,8 @@
         Title="Tokenization System" Height="350" Width="450" Closed="mainWindow_Closed">
     <Grid>
 
-        <LoginUserControl:LoginUserControl x:Name="ucLogin" HorizontalAlignment="Center" VerticalAlignment="Center" Login="ucLogin_Login" Register="ucLogin_Register"/>
-        <TokenProcessorUserControl:TokenProcessorUserControl x:Name="ucRequest" Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" TokenRequested="ucRequest_TokenRequested" CardIDRequested="ucRequest_CardIDRequested" Width="440" Height="330"/>
+        <LoginUserControl:LoginUserControl x:Name="ucLogin" HorizontalAlignment="Center" VerticalAlignment="Center" Login="ucLogin_Login" Register="ucLogin_Register" Width="450" Height="300"/>
+        <TokenProcessorUserControl:TokenProcessorUserControl x:Name="ucRequest" Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" TokenRequested="ucRequest_TokenRequested" CardIDRequested="ucRequest_CardIDRequested" Width="450" Height="300"/>
 
     </Grid>
 </Window>

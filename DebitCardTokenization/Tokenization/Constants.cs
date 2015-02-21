@@ -15,7 +15,7 @@ namespace Tokenization
             public const int PORT = 10000;
             public const int VALID_CARD_LENGTH = 16;
             public const string LOGIN_SUCCESSFUL = "Welcome";
-            public const string REGISTER_SUCCESSFUL = "Registration";
+            public const string REGISTER_SUCCESSFUL = "Registration successful!";
             public const string INVALID_CARD_ID = "The ID of the card is not valid.";
             public const string TOKEN_CREATE_FAILED = "Could not create token.";
             public const string NAME_HAS_CREATED_TOKEN = "{0} created Token {1}";

@@ -6,20 +6,31 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="450">
     <Grid>
-        <Label x:Name="lblTitle" Content="Card Tokenization System" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25" FontFamily="Georgia" Margin="69,22,71,240"/>
-        <TextBox x:Name="txtUsername" HorizontalAlignment="Left" Height="23" Margin="123,83,0,0" VerticalAlignment="Top" Width="161"/>
-        <PasswordBox x:Name="txtPassword" HorizontalAlignment="Left" Height="23" Margin="123,143,0,0" VerticalAlignment="Top" Width="161"/>
-        <Label x:Name="lblUsername" Content="Username" Margin="22,77,332,191" FontSize="16"/>
-        <Label x:Name="lblPassword" Content="Password" Margin="22,138,332,127" FontSize="16"/>
-        <ListBox x:Name="lbxAccess" Visibility="Hidden" HorizontalAlignment="Left" Height="100" Margin="331,77,0,0" VerticalAlignment="Top" Width="100">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="113*"/>
+            <ColumnDefinition Width="187*"/>
+            <ColumnDefinition Width="150*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="73*"/>
+            <RowDefinition Height="71*"/>
+            <RowDefinition Height="80*"/>
+            <RowDefinition Height="76*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="lblTitle" Content="Card Tokenization System" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25" FontFamily="Georgia" Margin="74,22,76,13" Grid.ColumnSpan="3"/>
+        <TextBox x:Name="txtUsername" HorizontalAlignment="Center" Height="23" VerticalAlignment="Center" Width="161" Grid.Row="1" Grid.Column="1"/>
+        <PasswordBox x:Name="txtPassword" HorizontalAlignment="Center" Height="23" VerticalAlignment="Center" Width="161" Grid.Row="2" Grid.Column="1"/>
+        <Label x:Name="lblUsername" Content="Username" FontSize="16" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Label x:Name="lblPassword" Content="Password" FontSize="16" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <ListBox x:Name="lbxAccess" Visibility="Hidden" HorizontalAlignment="Center" Height="100" VerticalAlignment="Center" Width="100" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2">
             <ListBoxItem Tag="0" Content="None" />
             <ListBoxItem Tag="1" Content="Register"/>
             <ListBoxItem Tag="2"  Content="Request"/>
             <ListBoxItem Tag="3" Content="Master"/>
         </ListBox>
-        <CheckBox x:Name="chkIsRegister" Content="To register tick here" HorizontalAlignment="Left" Margin="22,255,0,0" VerticalAlignment="Top" Checked="chkIsRegister_Checked" Unchecked="chkIsRegister_Unchecked"/>
-        <Button x:Name="btnLogin" Content="Login" HorizontalAlignment="Left" Margin="278,252,0,0" VerticalAlignment="Top" Width="74" Click="btnLogin_Click"/>
-        <Button x:Name="btnRegister" Content="Register" Visibility="Hidden" HorizontalAlignment="Left" Margin="277,252,0,0" VerticalAlignment="Top" Width="75" Click="btnRegister_Click"/>
+        <CheckBox x:Name="chkIsRegister" Content="To register tick here" HorizontalAlignment="Left" Margin="22,31,0,0" VerticalAlignment="Top" Checked="chkIsRegister_Checked" Unchecked="chkIsRegister_Unchecked" Grid.Row="3" Grid.ColumnSpan="2"/>
+        <Button x:Name="btnLogin" Content="Login" HorizontalAlignment="Left" Margin="165,28,0,0" VerticalAlignment="Top" Width="74" Click="btnLogin_Click" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"/>
+        <Button x:Name="btnRegister" Content="Register" Visibility="Hidden" HorizontalAlignment="Left" Margin="164,28,0,0" VerticalAlignment="Top" Width="75" Click="btnRegister_Click" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"/>
 
     </Grid>
 </UserControl>
