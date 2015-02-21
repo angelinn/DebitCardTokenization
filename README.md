@@ -1,17 +1,24 @@
 # DebitCardTokenization
-A Debit Card Tokenization with multithreading server project for the C# .NET course of FMI.
+#### A Debit Card Tokenization with multithreading server project for the C# .NET course of FMI.
 
 
-Course Project
+##### Course Project
+
 Обектно Ориентирано Програмиране
+
 (OOP with C#.NET)
+
 Токенизация на банкови карти с многонишков сървър
 
 Acceptable Programming Languages:	C#.NET 
+
 Deadline:	Февруари, 2015(on the final exam date)
+
 Instructor	Dr. Evgeny Krustev
 
-Problem Statement: 
+
+Problem Statement:
+
 С оглед защита на информационни системи, използващи номера на банкови карти, да се реализира система, предоставяща възможност за „токенизация“.[1- 2] Токенизацията представлява изоморфно изображение на номер на 16 цифров номер на  карта към число. Например:
 	Номер на карта:	4563 9601 2201 9991 
 	Токен:	1234 2434 3426 9991
@@ -39,25 +46,3 @@ Problem Statement:
 2.	Извиква опции за регистрация на токен и извличане на номер на карта;
 3.	Коректно визуализира резултати и грешки.
 4.	Потребителският вход да се валидира с регулярни изрази
-
-Evaluation:
-Your project will be evaluated on the following general points:
-•	Sophistication/complexity/originality of the problem being solved/investigated and of the solution(s)/approaches considered.
-•	Demonstrated ability to extract/analyze concurrency-related problems/issues from a general problem/area of interest.
-•	Clarity of explanations, and for implementations programming skill/quality. Your report  (in Bulgarian!) should be well written and free of grammatical and spelling errors. Programs must be well-commented and in a professional style.
-•	Awareness of related work. Others have considered the same or similar problems before you. Your work does not have to be novel, but you should be able to contextualize your approach. Be sure to explain how each referenced work is related to your work. Note that a 5-minute Google search will not be adequate; if you are unfamiliar with the required textbooks for the course: 
-•	Completeness of the project.
-Deliverables: The files with :
-1.	the source code
-2.	the executable code
-3.	the instructions for compiling your source code
-4.	the report explaining the data structures and the algorithm implementation, describe things such as how your code has been tested, limitations of your code, problems encountered, and problems remaining
-5.	any files used to test the implementation of the program with an explanation about it included in the report.
-
-References:
-[1]	Implementing Tokenization Is Simpler Than You Think, http://www.firstdata.com/en_us/insights/implementing-tokenization-white-paper
-[2]	How Security Can Help Grow Your Business: The Marketing Side of Tokenization, http://merch.bankofamerica.com/documents/10162/50824/How+Security+Can+Help+Grow+Your+Business.pdf 
-[3]	H. M. Deitel, P. J. Deitel, “Visual C# 2012 How to Program”, 5th  ed., Prentice Hall 2013, ISBN 0-13-337933-7 ISBN-13: 978-0-13-337933-4  (основна)
-[4]	Daniel Solis, “Illustrated C# 2012”,  4th ed. APress 2012, ISBN-13 (pbk): 978-1-4302-4278-9
-[5]	John Sharp, “Microsoft Visual C# 2012 Step By Step”, Microsoft Press, 2013 ISBN-13: 978-0735668010
-
