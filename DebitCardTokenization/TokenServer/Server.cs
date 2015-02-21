@@ -70,40 +70,40 @@ namespace TokenServer
 
         public void Serialize()
         {
-            FileStream cards = new FileStream();
-            FileStream users = new FileStream();
             try
             {
                 XmlSerializer cardSer = new XmlSerializer(typeof(List<BankCard>));
                 XmlSerializer userSer = new XmlSerializer(typeof(List<Client>));
-                cards = new FileStream("C:\\users\\angelin\\desktop\\cards.xml", FileMode.Create, FileAccess.Write);
-                users = new FileStream("C:\\users\\angelin\\desktop\\clients.xml", FileMode.Create, FileAccess.Write);
+                using (FileStream cards = new FileStream("C:\\users\\angelin\\desktop\\cards.xml", FileMode.Create, FileAccess.Write))
+                using (FileStream users = new FileStream("C:\\users\\angelin\\desktop\\clients.xml", FileMode.Create, FileAccess.Write))
+                {
 
-                cardSer.Serialize(cards, bankCards);
-                userSer.Serialize(users, clients);
+                    cardSer.Serialize(cards, bankCards);
+                    userSer.Serialize(users, clients);
+                }
             }
             catch (Exception e)
             {
                 DisplayMethod(e.Message);
             }
-            cards.Close();
-            users.Close();
         }
 
         private void Deserialize()
         {
-            FileStream cards = new FileStream();
-            FileStream users = new FileStream();
-
             try
             {
                 XmlSerializer cardDes = new XmlSerializer(typeof(List<BankCard>));
                 XmlSerializer userDes = new XmlSerializer(typeof(List<Client>));
-                cards = new FileStream("C:\\users\\angelin\\desktop\\cards.xml", FileMode.Open, FileAccess.Read);
-                users = new FileStream("C:\\users\\angelin\\desktop\\clients.xml", FileMode.Open, FileAccess.Read);
+                using (FileStream cards = new FileStream("C:\\users\\angelin\\desktop\\cards.xml", FileMode.Open, FileAccess.Read))
+                using (FileStream users = new FileStream("C:\\users\\angelin\\desktop\\clients.xml", FileMode.Open, FileAccess.Read))
+                {
 
-                bankCards = (List<BankCard>)cardDes.Deserialize(cards);
-                clients = (List<Client>)userDes.Deserialize(users);
+                    bankCards = (List<BankCard>)cardDes.Deserialize(cards);
+                    clients = (List<Client>)userDes.Deserialize(users);
+                }
+                DisplayMethod(String.Format(
+                    "Deserialization successful.\nLoaded {0} card(s) and {1} user(s).",
+                    bankCards.Count, clients.Count));
             }
             catch(Exception e)
             {
@@ -112,9 +112,6 @@ namespace TokenServer
                 clients = new List<Client>();
                 DisplayMethod("Lists have been reset.");
             }
-            cards.Close();
-            users.Close();
-            DisplayMethod("Deserialization successful.");
         }
 
         public void ExportSortedByCard(Action<object> DialogShower)

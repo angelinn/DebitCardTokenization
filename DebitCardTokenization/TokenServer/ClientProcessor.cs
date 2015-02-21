@@ -30,12 +30,20 @@ namespace TokenServer
             bankCardsRef = cards;
         }
 
-        private void AddToList<T>(List<T> list, T item)
+        private void AddToCards(string cardID, string token)
         {
             lock (this)
             {
-                if(!list.Any(it => it.Equals(item)))
-                    list.Add(item);
+                BankCard current = null;
+                try
+                {
+                    current = bankCardsRef.Single(card => card.ID == cardID);
+                    current.Tokens.Add(new Token(token, current.ID));
+                }
+                catch(InvalidOperationException)
+                {
+                    bankCardsRef.Add(new BankCard(cardID, new Token(token, cardID)));
+                }
             }
         }
 
@@ -111,7 +119,7 @@ namespace TokenServer
                 token = Tokenizer.MakeToken(cardID);
             }
 
-            AddToList<BankCard>(bankCardsRef, new BankCard(cardID, new Token(token, cardID)));
+            AddToCards(cardID, token);
             writer.Write(token);
             DisplayMethod(String.Format("{0} created Token {1}", client.Username, token));
         }
@@ -174,7 +182,10 @@ namespace TokenServer
             
             writer.Write("200");
             Client current = new Client(username.Trim(), password.Trim(), (AccessLevel)Convert.ToInt32(access));
-            AddToList<Client>(clientsRef, current);
+            lock(this)
+            {
+                clientsRef.Add(current);
+            }
             DisplayMethod(String.Format("{0} has registered successfully.", username));
 
             return current;
