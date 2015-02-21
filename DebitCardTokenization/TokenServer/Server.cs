@@ -17,7 +17,6 @@ namespace TokenServer
         private Thread readThread;
         private List<Client> clients;
         private List<BankCard> bankCards;
-        private Tokenizer tokenizer;
         private Action<object> DisplayMethod;
         private Action<object> DisplayError;
 
@@ -37,7 +36,6 @@ namespace TokenServer
         {
             clients = new List<Client>();
             bankCards = new List<BankCard>();
-            tokenizer = new Tokenizer();
 
             readThread = new Thread(new ThreadStart(RunServer));
             readThread.Start();

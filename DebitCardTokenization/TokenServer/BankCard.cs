@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace TokenServer
 {
-    [Serializable]
     public class BankCard
     {
         private string id;
@@ -47,7 +46,7 @@ namespace TokenServer
             Tokens.Add(token);
         }
             
-        public BankCard() : this(String.Empty, null)
+        public BankCard() : this(String.Empty, new Token())
         {   }
         
         private BankCard(BankCard other)

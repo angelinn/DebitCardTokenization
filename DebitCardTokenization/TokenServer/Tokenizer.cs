@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace TokenServer
 {
-    public class Tokenizer
+    public static class Tokenizer
     {
-        private int[] VALID_START = new int[] { 3, 4, 5, 6 };
-
         // 369345657653147
-        public string MakeToken(string ID)
+        public static string MakeToken(string ID)
         {
             if (!IsIDValid(ID))
                 return null;
@@ -20,8 +18,8 @@ namespace TokenServer
 
             return BuildToken(ID) + lastFourDigits;
         }
-        
-        private string BuildToken(string ID)
+
+        private static string BuildToken(string ID)
         {
             int[] token = new int[ID.Length - 4];
             Random random = new Random((int)DateTime.Now.Ticks);
@@ -48,40 +46,24 @@ namespace TokenServer
             return new string(result);
         }
 
-        private int GenerateCorrectNumber(char c, Random random)
+        private static int GenerateCorrectNumber(char c, Random random)
         {
-            bool correctStart = false;
             int rand = 0;
 
-            while (!correctStart)
+            do
             {
                 rand = random.Next(1, 10);
-                
-                if (rand != Convert.ToInt32(c.ToString()))
-                {
-                    correctStart = true;
-
-                    foreach (int digit in VALID_START)
-                        if (digit == rand)
-                            correctStart = false;
-                }
-            }
+            } while (rand == Convert.ToInt32(c.ToString()) || !IsNewStartDigitValid(rand));
 
             return rand;
         }
 
-        private bool IsIDValid(string ID)
+        private static bool IsIDValid(string ID)
         {
-            bool correctStart = false;
-
-            foreach(int digit in VALID_START)
-                if(digit == Convert.ToInt32(ID[0].ToString()))
-                    correctStart = true;
-
-            return correctStart && LuhnTest(ID);
+            return !IsNewStartDigitValid(Convert.ToInt32(ID[0].ToString())) && LuhnTest(ID);
         }
 
-        private bool LuhnTest(string ID)
+        private static bool LuhnTest(string ID)
         {
             int[] numberArray = new int[ID.Length];
 
@@ -96,24 +78,16 @@ namespace TokenServer
                     numberArray[i] *= 2;
 
                 if (numberArray[i] > 9)
-                    numberArray[i] = SumDigits(numberArray[i]);
+                    numberArray[i] = (numberArray[i] % 10) + (numberArray[i] / 10);
 
                 sum += numberArray[i];
             }
             return (sum % 10 == 0);
         }
 
-        private int SumDigits(int number)
+        private static bool IsNewStartDigitValid(int digit)
         {
-            int sum = 0;
-
-            while(number != 0)
-            {
-                sum += number % 10;
-                number /= 10;
-            }
-
-            return sum;
+            return (digit != 3 && digit != 4 && digit != 5 && digit != 6);
         }
     }
 }

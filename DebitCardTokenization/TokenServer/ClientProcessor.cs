@@ -18,7 +18,6 @@ namespace TokenServer
         private BinaryWriter writer;
         private NetworkStream networkStream;
         private Client client;
-        private Tokenizer tokenizer;
         private List<Client> clientsRef;
         private List<BankCard> bankCardsRef;
         private Action<object> DisplayMethod;
@@ -35,7 +34,8 @@ namespace TokenServer
         {
             lock (this)
             {
-                list.Add(item);
+                if(!list.Any(it => it.Equals(item)))
+                    list.Add(item);
             }
         }
 
@@ -48,7 +48,6 @@ namespace TokenServer
             networkStream = new NetworkStream(currentSocket);
             reader = new BinaryReader(networkStream);
             writer = new BinaryWriter(networkStream);
-            tokenizer = new Tokenizer();
 
             try
             {
@@ -91,56 +90,70 @@ namespace TokenServer
             throw new InvalidDataException();
         }
 
+        private void RequestToken()
+        {
+            string cardID = reader.ReadString();
+            string token = String.Empty;
+            if ((token = Tokenizer.MakeToken(cardID)) == null)
+            {
+                writer.Write("The ID of the card is not valid.");
+                return;
+            }
+
+            int attempts = 0;
+            while(!IsTokenAvailable(token))
+            {
+                if (attempts++ == 100000)
+                {
+                    writer.Write("Could not create token.");
+                    return;
+                }
+                token = Tokenizer.MakeToken(cardID);
+            }
+
+            AddToList<BankCard>(bankCardsRef, new BankCard(cardID, new Token(token, cardID)));
+            writer.Write(token);
+            DisplayMethod(String.Format("{0} created Token {1}", client.Username, token));
+        }
+
         private void ProcessRequest()
         {
             Activity response = (Activity)reader.ReadInt32();
-            string ID = null;
-            string token = null;
 
-            if (response == Activity.REQUEST_CARD)
-            {
-                if (client.Access < AccessLevel.REQUEST)
-                {
-                    writer.Write("You cannot request ID of a card.");
-                    return;
-                }
-
-                token = reader.ReadString();
-                ID = RequestCardID(token);
-
-                string returnMessage = ID == null ? "There's no ID associated to this token." : ID;
-                writer.Write(returnMessage);
-                DisplayMethod(String.Format("{0} requested {1}", client.Username, returnMessage));
-            }
-            else if (response == Activity.REGISTER_TOKEN)
-            {
-                if (client.Access < AccessLevel.REGISTER)
-                {
-                    writer.Write("You cannot register tokens for a card.");
-                    return;
-                }
-
-                ID = reader.ReadString();
-                if ((token = tokenizer.MakeToken(ID)) == null)
-                {
-                    writer.Write("The ID of the card is not valid.");
-                    return;
-                }
-
-                AddToList<BankCard>(bankCardsRef, new BankCard(ID, new Token(token, ID)));
-                writer.Write(token);
-                DisplayMethod(String.Format("{0} created Token {1}", client.Username, token));
-            }
+            if (response == Activity.REQUEST_CARD && client.Access >= AccessLevel.REQUEST)
+                RequestCardID();
+            else if (response == Activity.REGISTER_TOKEN && client.Access >= AccessLevel.REGISTER)
+                RequestToken();
+            else
+                writer.Write("Your access level is not high enough");
         }
 
-        private string RequestCardID(string token)
+        private bool IsTokenAvailable(string token)
         {
+            foreach(BankCard card in bankCardsRef)
+            {
+                if (card.Tokens.Any(tk => tk.ID == token))
+                    return false;
+            }
+            return true;
+        }
+
+        private void RequestCardID()
+        {
+            string token = reader.ReadString();
+            string cardID = "There's no ID associated to this token.";
+
             foreach (BankCard card in bankCardsRef)
             {
                 if (card.Tokens.Any(tk => tk.ID == token))
-                    return card.ID;
+                {
+                    cardID = card.ID;
+                    break;
+                }
             }
-            return null;
+
+            writer.Write(cardID);
+            DisplayMethod(String.Format("{0} requested {1}", client.Username, cardID));
         }
 
         private Client RegisterClient()
@@ -179,7 +192,7 @@ namespace TokenServer
                 password = reader.ReadString();
                 current = clientsRef.Single(cl => cl.Username == username && cl.Password == password);
 
-                writer.Write(String.Format("Welcome back, {0}!", client.Username));
+                writer.Write(String.Format("Welcome back, {0}!", current.Username));
                 DisplayMethod(String.Format("{0} has logged in.", username));
             }
             catch (InvalidOperationException)

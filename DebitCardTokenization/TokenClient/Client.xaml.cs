@@ -53,7 +53,7 @@ namespace TokenClient
 
             string returnedMessage = reader.ReadString();
 
-            if (returnedMessage == "200")
+            if (returnedMessage == "200" || returnedMessage.StartsWith("Welcome"))
                 return true;
 
             MessageBox.Show(returnedMessage);
