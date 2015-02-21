@@ -24,9 +24,14 @@ namespace TokenServer
         // C-tor, that accepts two actions, so the server can write to the UI
         public Server(Action<object> message, Action<object> error)
         {
-            DisplayMethod = message;
-            DisplayError = error;
-            Load();
+            if (null != message && null != error)
+            {
+                DisplayMethod = message;
+                DisplayError = error;
+                Load();
+            }
+            else
+                System.Environment.Exit(System.Environment.ExitCode);
         }
 
         // Destructor, Serializes the data
@@ -110,6 +115,7 @@ namespace TokenServer
                     bankCards = (List<BankCard>)cardDes.Deserialize(cards);
                     clients = (List<User>)userDes.Deserialize(users);
                 }
+
                 DisplayMethod(String.Format(
                     Constants.DESERIALIZE_SUCCESSFUL,
                     bankCards.Count, clients.Count));
@@ -127,10 +133,14 @@ namespace TokenServer
         // Accepts an Action that opens the SaveFileDialog from the UI Thread
         public void ExportSortedByCard(Action<object> DialogShower)
         {
-            System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog();
-            DialogShower(dialog);
+            string fileName = String.Empty;
+            using(System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog())
+            {
+                DialogShower(dialog);
+                fileName = dialog.FileName;
+            }
 
-            FileStream output = new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write);
+            FileStream output = new FileStream(fileName, FileMode.Create, FileAccess.Write);
             StreamWriter writer = new StreamWriter(output);
 
             IEnumerable<BankCard> sorted = bankCards.OrderBy(card => card.ID);
@@ -148,10 +158,14 @@ namespace TokenServer
         // Accepts an Action that opens the SaveFileDialog from the UI Thread
         public void ExportSortedByToken(Action<object> DialogShower)
         {
-            System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog();
-            DialogShower(dialog);
+            string fileName = String.Empty;
+            using (System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog())
+            {
+                DialogShower(dialog);
+                fileName = dialog.FileName;
+            }
 
-            FileStream output = new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write);
+            FileStream output = new FileStream(fileName, FileMode.Create, FileAccess.Write);
             StreamWriter writer = new StreamWriter(output);
 
             List<Token> tokens = new List<Token>();
