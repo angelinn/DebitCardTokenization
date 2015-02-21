@@ -27,7 +27,11 @@ namespace TokenServer
             Random random = new Random((int)DateTime.Now.Ticks);
             int sum = 0;
 
-            for (int i = 0; i < token.Length; ++i)
+            do
+                token[0] = GenerateCorrectNumber(ID[0], random);
+            while(!IsNewStartDigitValid(token[0]));
+
+            for (int i = 1; i < token.Length; ++i)
             {
                 token[i] = GenerateCorrectNumber(ID[i], random);
                 sum += token[i];
@@ -56,7 +60,7 @@ namespace TokenServer
             do
             {
                 rand = random.Next(1, 10);
-            } while (rand == Convert.ToInt32(c.ToString()) || !IsNewStartDigitValid(rand));
+            } while (rand == Convert.ToInt32(c.ToString()));
 
             return rand;
         }
