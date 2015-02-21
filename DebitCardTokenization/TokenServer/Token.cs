@@ -44,5 +44,8 @@ namespace TokenServer
             ID = numbers;
             Owner = own;
         }
+
+        public Token() : this(String.Empty, String.Empty)
+        {   }
     }
 }
