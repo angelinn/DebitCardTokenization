@@ -118,6 +118,7 @@ namespace TokenServer
         // Generates token and sends it back to the client
         private void RequestToken()
         {
+            writer.Write((int)Activity.ACCEPTED);
             string cardID = reader.ReadString();
             string token = String.Empty;
             if ((token = Tokenizer.MakeToken(cardID)) == null)
@@ -152,7 +153,7 @@ namespace TokenServer
             else if (response == Activity.REGISTER_TOKEN && client.Access >= AccessLevel.REGISTER)
                 RequestToken();
             else
-                writer.Write(Constants.ACCESS_DENIED);
+                writer.Write((int)Activity.DENIED);
         }
 
         // Checks if the given token doesn't exist already in the database
@@ -169,6 +170,7 @@ namespace TokenServer
         // Gets a Card ID, based on the read token and sends it back to the client
         private void RequestCardID()
         {
+            writer.Write((int)Activity.ACCEPTED);
             string token = reader.ReadString();
             string cardID = Constants.ID_NOT_FOUND;
 
