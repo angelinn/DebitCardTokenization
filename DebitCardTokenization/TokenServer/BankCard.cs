@@ -46,15 +46,15 @@ namespace TokenServer
             Tokens = new List<Token>();
             ID = num;
 
-            lock (Tokens)
-            {
-                Tokens.Add(token);
-            }
+            Tokens.Add(token);
         }
         
         // Default c-tor
-        public BankCard() : this(String.Empty, new Token())
-        {   }
+        public BankCard()
+        {
+            ID = String.Empty;
+            Tokens = new List<Token>();
+        }
         
         // Copy c-tor, we don't want it to be accessed
         private BankCard(BankCard other)
