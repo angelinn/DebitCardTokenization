@@ -62,7 +62,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BankCard.cs" />
-    <Compile Include="Client.cs" />
+    <Compile Include="User.cs" />
     <Compile Include="ClientProcessor.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Token.cs" />

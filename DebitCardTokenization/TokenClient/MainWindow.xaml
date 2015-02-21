@@ -1,7 +1,7 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:LoginUserControl="clr-namespace:LoginUserControl;assembly=LoginUserControl" xmlns:TokenProcessorUserControl="clr-namespace:TokenProcessorUserControl;assembly=TokenProcessorUserControl" x:Name="mainWindow" x:Class="TokenClient.Client"
+        xmlns:LoginUserControl="clr-namespace:LoginUserControl;assembly=LoginUserControl" xmlns:TokenProcessorUserControl="clr-namespace:TokenProcessorUserControl;assembly=TokenProcessorUserControl" x:Name="mainWindow" x:Class="TokenClient.MainWindow"
         Title="Tokenization System" Height="350" Width="450" Closed="mainWindow_Closed">
     <Grid>
 

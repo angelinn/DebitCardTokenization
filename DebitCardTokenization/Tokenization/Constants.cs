@@ -37,6 +37,7 @@ namespace Tokenization
             public const string ACCESS_NOT_SELECTED = "Please select an access level";
             public const string USERNAME_INCORRECT = "Username must be between 6-20 characters.";
             public const string INCORRECT_TITLE = "Incorrect!";
+            public const string ATTENTION_TITLE = "Attention!";
         }
     }
 }

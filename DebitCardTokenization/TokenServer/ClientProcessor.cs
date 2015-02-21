@@ -18,13 +18,13 @@ namespace TokenServer
         private BinaryReader reader;
         private BinaryWriter writer;
         private NetworkStream networkStream;
-        private Client client;
-        private List<Client> clientsRef;
+        private User client;
+        private List<User> clientsRef;
         private List<BankCard> bankCardsRef;
         private Action<object> DisplayMethod;
         
 
-        public ClientProcessor(Action<object> message, List<Client> clients, List<BankCard> cards)
+        public ClientProcessor(Action<object> message, List<User> clients, List<BankCard> cards)
         {
             DisplayMethod = message;
             clientsRef = clients;
@@ -89,7 +89,7 @@ namespace TokenServer
             }
         }
 
-        private Client DetermineLogin()
+        private User DetermineLogin()
         {
             Activity response = (Activity)reader.ReadInt32();
 
@@ -168,7 +168,7 @@ namespace TokenServer
             DisplayMethod(String.Format(Constants.NAME_HAS_REQUESTED, client.Username, cardID));
         }
 
-        private Client RegisterClient()
+        private User RegisterClient()
         {
             string username = String.Empty;
             string password = String.Empty;
@@ -185,7 +185,7 @@ namespace TokenServer
             }
             
             writer.Write(Constants.REGISTER_SUCCESSFUL);
-            Client current = new Client(username.Trim(), password.Trim(), (AccessLevel)Convert.ToInt32(access));
+            User current = new User(username.Trim(), password.Trim(), (AccessLevel)Convert.ToInt32(access));
             lock(this)
             {
                 clientsRef.Add(current);
@@ -195,11 +195,11 @@ namespace TokenServer
             return current;
         }
 
-        private Client LogClientIn()
+        private User LogClientIn()
         {
             string username = String.Empty;
             string password = String.Empty;
-            Client current = null;
+            User current = null;
 
             try
             {

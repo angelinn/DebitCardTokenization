@@ -8,8 +8,7 @@ using Tokenization.Access;
 
 namespace TokenServer
 {
-    [Serializable]
-    public class Client
+    public class User
     {
         private string username;
         private string password;
@@ -59,17 +58,17 @@ namespace TokenServer
             }
         }
 
-        public Client(string un, string pw, AccessLevel level)
+        public User(string un, string pw, AccessLevel level)
         {
             Username = un;
             Password = pw;
             Access = level;
         }
 
-        public Client() : this(String.Empty, String.Empty, AccessLevel.NONE)
+        public User() : this(String.Empty, String.Empty, AccessLevel.NONE)
         {   }
 
-        public Client(Client other) : this(other.Username, other.Password, other.Access)
+        public User(User other) : this(other.Username, other.Password, other.Access)
         {   }
 
     }

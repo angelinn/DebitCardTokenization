@@ -15,7 +15,7 @@ namespace TokenServer
     public class Server
     {
         private Thread readThread;
-        private List<Client> clients;
+        private List<User> clients;
         private List<BankCard> bankCards;
         private Action<object> DisplayMethod;
         private Action<object> DisplayError;
@@ -34,7 +34,7 @@ namespace TokenServer
 
         public void Load()
         {
-            clients = new List<Client>();
+            clients = new List<User>();
             bankCards = new List<BankCard>();
 
             readThread = new Thread(new ThreadStart(RunServer));
@@ -73,7 +73,7 @@ namespace TokenServer
             try
             {
                 XmlSerializer cardSer = new XmlSerializer(typeof(List<BankCard>));
-                XmlSerializer userSer = new XmlSerializer(typeof(List<Client>));
+                XmlSerializer userSer = new XmlSerializer(typeof(List<User>));
                 using (FileStream cards = new FileStream(Constants.CARDS_FILE, FileMode.Create, FileAccess.Write))
                 using (FileStream users = new FileStream(Constants.USERS_FILE, FileMode.Create, FileAccess.Write))
                 {
@@ -93,13 +93,13 @@ namespace TokenServer
             try
             {
                 XmlSerializer cardDes = new XmlSerializer(typeof(List<BankCard>));
-                XmlSerializer userDes = new XmlSerializer(typeof(List<Client>));
+                XmlSerializer userDes = new XmlSerializer(typeof(List<User>));
                 using (FileStream cards = new FileStream(Constants.CARDS_FILE, FileMode.Open, FileAccess.Read))
                 using (FileStream users = new FileStream(Constants.USERS_FILE, FileMode.Open, FileAccess.Read))
                 {
 
                     bankCards = (List<BankCard>)cardDes.Deserialize(cards);
-                    clients = (List<Client>)userDes.Deserialize(users);
+                    clients = (List<User>)userDes.Deserialize(users);
                 }
                 DisplayMethod(String.Format(
                     Constants.DESERIALIZE_SUCCESSFUL,
@@ -109,7 +109,7 @@ namespace TokenServer
             {
                 DisplayMethod(e.Message);
                 bankCards = new List<BankCard>();
-                clients = new List<Client>();
+                clients = new List<User>();
                 DisplayMethod(Constants.LISTS_RESET);
             }
         }
