@@ -45,7 +45,11 @@ namespace TokenServer
         {
             Tokens = new List<Token>();
             ID = num;
-            Tokens.Add(token);
+
+            lock (Tokens)
+            {
+                Tokens.Add(token);
+            }
         }
         
         // Default c-tor
