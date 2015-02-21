@@ -198,7 +198,7 @@ namespace TokenServer
             password = reader.ReadString();
             access = (AccessLevel)reader.ReadInt32();
 
-            if (clientsRef.Any(cl => cl.Username == username))
+            if (clientsRef.Any(cl => cl.Username.Equals(username)))
             {
                 writer.Write(Constants.USERNAME_EXISTS);
                 return null;
@@ -227,7 +227,7 @@ namespace TokenServer
             {
                 username = reader.ReadString();
                 password = reader.ReadString();
-                current = clientsRef.Single(cl => cl.Username == username && cl.Password == password);
+                current = clientsRef.Single(cl => cl.Username.Equals(username) && cl.Password.Equals(password));
 
                 writer.Write(String.Format(Constants.WELCOME_BACK_NAME, current.Username));
                 DisplayMethod(String.Format(Constants.NAME_HAS_LOGGED_IN, username));

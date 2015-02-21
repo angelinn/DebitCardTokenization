@@ -52,7 +52,7 @@ namespace TokenClient
         {
             try
             {
-                if (client.LogIn(args.Username, args.Password))
+                if (client.LogIn(args.Username, args.Password.GetHashCode().ToString()))
                     ShowRequestUC();
             }
             catch (Exception e)
@@ -73,7 +73,8 @@ namespace TokenClient
                     MessageBox.Show(Constants.ACCESS_NOT_SELECTED, Constants.INCORRECT_TITLE,
                                     MessageBoxButton.OK, MessageBoxImage.Information);
 
-                else if (client.Register(args.Username, args.Password, (AccessLevel)args.ListBoxMarked))
+                else if (client.Register(args.Username, args.Password.GetHashCode().ToString(),
+                        (AccessLevel)args.ListBoxMarked))
                     ShowRequestUC();
             }
             catch (Exception e)
