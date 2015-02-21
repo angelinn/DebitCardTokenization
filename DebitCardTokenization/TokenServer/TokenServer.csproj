@@ -66,7 +66,6 @@
     <Compile Include="ClientProcessor.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Token.cs" />
-    <Compile Include="TokenException.cs" />
     <Compile Include="Tokenizer.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

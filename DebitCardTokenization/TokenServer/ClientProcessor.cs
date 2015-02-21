@@ -10,6 +10,7 @@ using Tokenization.Access;
 using Tokenization.Activities;
 using Tokenization.Consts;
 
+
 namespace TokenServer
 {
     public class ClientProcessor
@@ -38,17 +39,20 @@ namespace TokenServer
         // On ending a connection, all streams are being shut down
         ~ClientProcessor()
         {
-            reader.Close();
-            writer.Close();
-            networkStream.Close();
-            currentSocket.Close();
+            if (client != null)
+            {
+                reader.Close();
+                writer.Close();
+                networkStream.Close();
+                currentSocket.Close();
+            }
         }
 
         // Method, that adds a token to the card array
         // It's being locked to prevent thread misunderstanding
         private void AddToCards(string cardID, string token)
         {
-            lock (this)
+            lock(bankCardsRef)
             {
                 BankCard current = null;
                 try
@@ -200,7 +204,7 @@ namespace TokenServer
             
             writer.Write(Constants.REGISTER_SUCCESSFUL);
             User current = new User(username.Trim(), password.Trim(), (AccessLevel)Convert.ToInt32(access));
-            lock(this)
+            lock(clientsRef)
             {
                 // locking the object to prevent multiple addings and misunderstanding
                 clientsRef.Add(current);
