@@ -8,6 +8,7 @@ using System.IO;
 using System.Net;
 using Tokenization.Access;
 using Tokenization.Activities;
+using Tokenization.Consts;
 
 namespace TokenServer
 {
@@ -28,6 +29,14 @@ namespace TokenServer
             DisplayMethod = message;
             clientsRef = clients;
             bankCardsRef = cards;
+        }
+
+        ~ClientProcessor()
+        {
+            reader.Close();
+            writer.Close();
+            networkStream.Close();
+            currentSocket.Close();
         }
 
         private void AddToCards(string cardID, string token)
@@ -78,11 +87,6 @@ namespace TokenServer
                     DisplayMethod(e.Message);
                 }
             }
-
-            reader.Close();
-            writer.Close();
-            networkStream.Close();
-            currentSocket.Close();
         }
 
         private Client DetermineLogin()
@@ -104,7 +108,7 @@ namespace TokenServer
             string token = String.Empty;
             if ((token = Tokenizer.MakeToken(cardID)) == null)
             {
-                writer.Write("The ID of the card is not valid.");
+                writer.Write(Constants.INVALID_CARD_ID);
                 return;
             }
 
@@ -113,7 +117,7 @@ namespace TokenServer
             {
                 if (attempts++ == 100000)
                 {
-                    writer.Write("Could not create token.");
+                    writer.Write(Constants.TOKEN_CREATE_FAILED);
                     return;
                 }
                 token = Tokenizer.MakeToken(cardID);
@@ -121,7 +125,7 @@ namespace TokenServer
 
             AddToCards(cardID, token);
             writer.Write(token);
-            DisplayMethod(String.Format("{0} created Token {1}", client.Username, token));
+            DisplayMethod(String.Format(Constants.NAME_HAS_CREATED_TOKEN, client.Username, token));
         }
 
         private void ProcessRequest()
@@ -133,7 +137,7 @@ namespace TokenServer
             else if (response == Activity.REGISTER_TOKEN && client.Access >= AccessLevel.REGISTER)
                 RequestToken();
             else
-                writer.Write("Your access level is not high enough");
+                writer.Write(Constants.ACCESS_DENIED);
         }
 
         private bool IsTokenAvailable(string token)
@@ -149,7 +153,7 @@ namespace TokenServer
         private void RequestCardID()
         {
             string token = reader.ReadString();
-            string cardID = "There's no ID associated to this token.";
+            string cardID = Constants.ID_NOT_FOUND;
 
             foreach (BankCard card in bankCardsRef)
             {
@@ -161,7 +165,7 @@ namespace TokenServer
             }
 
             writer.Write(cardID);
-            DisplayMethod(String.Format("{0} requested {1}", client.Username, cardID));
+            DisplayMethod(String.Format(Constants.NAME_HAS_REQUESTED, client.Username, cardID));
         }
 
         private Client RegisterClient()
@@ -176,17 +180,17 @@ namespace TokenServer
 
             if (clientsRef.Any(cl => cl.Username == username))
             {
-                writer.Write("Username already exists!");
+                writer.Write(Constants.USERNAME_EXISTS);
                 return null;
             }
             
-            writer.Write("200");
+            writer.Write(Constants.REGISTER_SUCCESSFUL);
             Client current = new Client(username.Trim(), password.Trim(), (AccessLevel)Convert.ToInt32(access));
             lock(this)
             {
                 clientsRef.Add(current);
             }
-            DisplayMethod(String.Format("{0} has registered successfully.", username));
+            DisplayMethod(String.Format(Constants.NAME_HAS_REGISTERED, username));
 
             return current;
         }
@@ -203,12 +207,12 @@ namespace TokenServer
                 password = reader.ReadString();
                 current = clientsRef.Single(cl => cl.Username == username && cl.Password == password);
 
-                writer.Write(String.Format("Welcome back, {0}!", current.Username));
-                DisplayMethod(String.Format("{0} has logged in.", username));
+                writer.Write(String.Format(Constants.WELCOME_BACK_NAME, current.Username));
+                DisplayMethod(String.Format(Constants.NAME_HAS_LOGGED_IN, username));
             }
             catch (InvalidOperationException)
             {
-                writer.Write("Username or Password was incorrect.");
+                writer.Write(Constants.INCORRECT_INPUT);
             }
 
             return current;

@@ -49,14 +49,6 @@ namespace LoginUserControl
             }
         }
 
-        public enum AccessLevel
-        {
-            NONE = 0,
-            REGISTER = 1,
-            REQUEST = 2,
-            MASTER = 3
-        };
-
         public int ListBoxMarked
         {
             get

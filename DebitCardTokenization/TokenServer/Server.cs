@@ -7,8 +7,8 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Net;
 using System.IO;
-using wox.serial;
 using System.Xml.Serialization;
+using Tokenization.Consts;
 
 namespace TokenServer
 {
@@ -47,11 +47,11 @@ namespace TokenServer
             TcpListener listener;
             try
             {
-                IPAddress localhost = IPAddress.Parse("127.0.0.1");
-                listener = new TcpListener(localhost, 10000);
+                IPAddress localhost = IPAddress.Parse(Constants.LOCALHOST);
+                listener = new TcpListener(localhost, Constants.PORT);
 
                 listener.Start();
-                DisplayMethod("Server loaded. Waiting for connection.");
+                DisplayMethod(Constants.WAITING_FOR_CONNECTION);
 
                 while (true)
                 {
@@ -59,7 +59,7 @@ namespace TokenServer
                                                  DisplayMethod, clients, bankCards).Process),
                                                  listener.AcceptSocket());
 
-                    DisplayMethod("Connection received.");
+                    DisplayMethod(Constants.CONNECTION_ACCEPTED);
                 }
             }
             catch (Exception e)
@@ -74,8 +74,8 @@ namespace TokenServer
             {
                 XmlSerializer cardSer = new XmlSerializer(typeof(List<BankCard>));
                 XmlSerializer userSer = new XmlSerializer(typeof(List<Client>));
-                using (FileStream cards = new FileStream("C:\\users\\angelin\\desktop\\cards.xml", FileMode.Create, FileAccess.Write))
-                using (FileStream users = new FileStream("C:\\users\\angelin\\desktop\\clients.xml", FileMode.Create, FileAccess.Write))
+                using (FileStream cards = new FileStream(Constants.CARDS_FILE, FileMode.Create, FileAccess.Write))
+                using (FileStream users = new FileStream(Constants.USERS_FILE, FileMode.Create, FileAccess.Write))
                 {
 
                     cardSer.Serialize(cards, bankCards);
@@ -94,15 +94,15 @@ namespace TokenServer
             {
                 XmlSerializer cardDes = new XmlSerializer(typeof(List<BankCard>));
                 XmlSerializer userDes = new XmlSerializer(typeof(List<Client>));
-                using (FileStream cards = new FileStream("C:\\users\\angelin\\desktop\\cards.xml", FileMode.Open, FileAccess.Read))
-                using (FileStream users = new FileStream("C:\\users\\angelin\\desktop\\clients.xml", FileMode.Open, FileAccess.Read))
+                using (FileStream cards = new FileStream(Constants.CARDS_FILE, FileMode.Open, FileAccess.Read))
+                using (FileStream users = new FileStream(Constants.USERS_FILE, FileMode.Open, FileAccess.Read))
                 {
 
                     bankCards = (List<BankCard>)cardDes.Deserialize(cards);
                     clients = (List<Client>)userDes.Deserialize(users);
                 }
                 DisplayMethod(String.Format(
-                    "Deserialization successful.\nLoaded {0} card(s) and {1} user(s).",
+                    Constants.DESERIALIZE_SUCCESSFUL,
                     bankCards.Count, clients.Count));
             }
             catch(Exception e)
@@ -110,15 +110,13 @@ namespace TokenServer
                 DisplayMethod(e.Message);
                 bankCards = new List<BankCard>();
                 clients = new List<Client>();
-                DisplayMethod("Lists have been reset.");
+                DisplayMethod(Constants.LISTS_RESET);
             }
         }
 
         public void ExportSortedByCard(Action<object> DialogShower)
         {
             System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog();
-
-            dialog.DefaultExt = ".txt";
             DialogShower(dialog);
 
             FileStream output = new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write);
@@ -128,7 +126,7 @@ namespace TokenServer
             foreach (BankCard card in sorted)
             {
                 foreach (Token token in card.Tokens)
-                    writer.WriteLine(String.Format("Card: {0} < - > {1} :Token", card.ID, token.ID));
+                    writer.WriteLine(String.Format(Constants.CARD_VS_TOKEN, card.ID, token.ID));
             }
             writer.Close();
             output.Close();
@@ -138,8 +136,6 @@ namespace TokenServer
         public void ExportSortedByToken(Action<object> DialogShower)
         {
             System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog();
-
-            dialog.DefaultExt = ".txt";
             DialogShower(dialog);
 
             FileStream output = new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write);
@@ -155,7 +151,7 @@ namespace TokenServer
             IEnumerable<Token> sorted = tokens.OrderBy(token => token.ID);
 
             foreach (Token token in sorted)
-                writer.WriteLine(String.Format("Token: {0} < - > {1} :Card", token.ID, token.Owner));
+                writer.WriteLine(String.Format(Constants.TOKEN_VS_CARD, token.ID, token.Owner));
 
             writer.Close();
             output.Close();

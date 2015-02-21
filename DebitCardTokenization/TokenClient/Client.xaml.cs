@@ -16,14 +16,13 @@ using System.Net.Sockets;
 using System.IO;
 using Tokenization.Activities;
 using Tokenization.Access;
+using System.Text.RegularExpressions;
+using Tokenization.Consts;
 
 namespace TokenClient
 {
     public partial class Client : Window
     {
-        private const string LOCALHOST = "127.0.0.1";
-        private const int PORT = 10000;
-
         private TcpClient tcpClient;
         private NetworkStream networkStream;
         private BinaryReader reader;
@@ -40,9 +39,7 @@ namespace TokenClient
             if (!Dispatcher.CheckAccess())
                 Dispatcher.Invoke(new Action<string>(DisplayMessage), message);
             else
-            {
                 ucRequest.Result = (string)message;
-            }
         }
 
         private bool LogIn(string username, string password)
@@ -52,12 +49,17 @@ namespace TokenClient
             writer.Write(password);
 
             string returnedMessage = reader.ReadString();
+            MessageBox.Show(returnedMessage);
 
-            if (returnedMessage == "200" || returnedMessage.StartsWith("Welcome"))
+            if (returnedMessage.StartsWith(Constants.LOGIN_SUCCESSFUL))
                 return true;
 
-            MessageBox.Show(returnedMessage);
             return false;
+        }
+
+        private bool IsUsernameValid(string username)
+        {
+            return Regex.Match(username, "^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$").Success;
         }
 
         private bool Register(string username, string password, AccessLevel access)
@@ -68,10 +70,11 @@ namespace TokenClient
             writer.Write((int)access);
 
             string returnedMessage = reader.ReadString();
-            if (returnedMessage == "200")
+            MessageBox.Show(returnedMessage);
+
+            if (returnedMessage == Constants.REGISTER_SUCCESSFUL)
                 return true;
 
-            MessageBox.Show(returnedMessage);
             return false;
         }
 
@@ -80,7 +83,7 @@ namespace TokenClient
             try
             {
                 tcpClient = new TcpClient();
-                tcpClient.Connect(LOCALHOST, PORT);
+                tcpClient.Connect(Constants.LOCALHOST, Constants.PORT);
 
                 networkStream = tcpClient.GetStream();
                 reader = new BinaryReader(networkStream);
@@ -88,7 +91,7 @@ namespace TokenClient
             }
             catch(Exception e)
             {
-                MessageBox.Show(e.Message, "Fatal Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(e.Message, Constants.FATAL_ERROR, MessageBoxButton.OK, MessageBoxImage.Error);
                 System.Environment.Exit(System.Environment.ExitCode);
             }
         }
@@ -106,7 +109,14 @@ namespace TokenClient
 
         private void ucLogin_Register(object sender, LoginUserControl.LoginEventArgs args)
         {
-            if(Register(args.Username, args.Password, (AccessLevel)args.ListBoxMarked))
+            if (!IsUsernameValid(args.Username))
+                MessageBox.Show(Constants.USERNAME_INCORRECT, Constants.INCORRECT_TITLE,
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+            if(args.ListBoxMarked == -1)
+                MessageBox.Show(Constants.ACCESS_NOT_SELECTED, Constants.INCORRECT_TITLE,
+                                MessageBoxButton.OK, MessageBoxImage.Information);  
+
+            else if(Register(args.Username, args.Password, (AccessLevel)args.ListBoxMarked))
                 ShowRequestUC();
         }
 
