@@ -8,6 +8,8 @@
 *.cache
 Debug/
 obj/
+*.TMP
+*.tmp
 
 # Precompiled Headers
 *.gch
