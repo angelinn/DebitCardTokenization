@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.IO;
 using wox.serial;
+using System.Xml.Serialization;
 
 namespace TokenServer
 {
@@ -19,8 +20,6 @@ namespace TokenServer
         private Tokenizer tokenizer;
         private Action<object> DisplayMethod;
         private Action<object> DisplayError;
-
-        //private List<Token> tokens; Needed in Sorted token output
 
         public Server(Action<object> message, Action<object> error)
         {
@@ -73,14 +72,51 @@ namespace TokenServer
 
         public void Serialize()
         {
-            Easy.save(bankCards, "C:\\users\\angelin\\desktop\\cards.xml");
-            Easy.save(clients, "C:\\users\\angelin\\desktop\\clients.xml");
+            FileStream cards = new FileStream();
+            FileStream users = new FileStream();
+            try
+            {
+                XmlSerializer cardSer = new XmlSerializer(typeof(List<BankCard>));
+                XmlSerializer userSer = new XmlSerializer(typeof(List<Client>));
+                cards = new FileStream("C:\\users\\angelin\\desktop\\cards.xml", FileMode.Create, FileAccess.Write);
+                users = new FileStream("C:\\users\\angelin\\desktop\\clients.xml", FileMode.Create, FileAccess.Write);
+
+                cardSer.Serialize(cards, bankCards);
+                userSer.Serialize(users, clients);
+            }
+            catch (Exception e)
+            {
+                DisplayMethod(e.Message);
+            }
+            cards.Close();
+            users.Close();
         }
 
         private void Deserialize()
         {
-            object someth = Easy.load("C:\\users\\angelin\\desktop\\cards.xml");
-            clients = (List<Client>)Easy.load("C:\\users\\angelin\\desktop\\clients.xml");
+            FileStream cards = new FileStream();
+            FileStream users = new FileStream();
+
+            try
+            {
+                XmlSerializer cardDes = new XmlSerializer(typeof(List<BankCard>));
+                XmlSerializer userDes = new XmlSerializer(typeof(List<Client>));
+                cards = new FileStream("C:\\users\\angelin\\desktop\\cards.xml", FileMode.Open, FileAccess.Read);
+                users = new FileStream("C:\\users\\angelin\\desktop\\clients.xml", FileMode.Open, FileAccess.Read);
+
+                bankCards = (List<BankCard>)cardDes.Deserialize(cards);
+                clients = (List<Client>)userDes.Deserialize(users);
+            }
+            catch(Exception e)
+            {
+                DisplayMethod(e.Message);
+                bankCards = new List<BankCard>();
+                clients = new List<Client>();
+                DisplayMethod("Lists have been reset.");
+            }
+            cards.Close();
+            users.Close();
+            DisplayMethod("Deserialization successful.");
         }
 
         public void ExportSortedByCard(Action<object> DialogShower)
@@ -97,7 +133,7 @@ namespace TokenServer
             foreach (BankCard card in sorted)
             {
                 foreach (Token token in card.Tokens)
-                    writer.WriteLine(String.Format("Token: {0} < - > {1} :Card", card.ID, token.ID));
+                    writer.WriteLine(String.Format("Card: {0} < - > {1} :Token", card.ID, token.ID));
             }
             writer.Close();
             output.Close();
