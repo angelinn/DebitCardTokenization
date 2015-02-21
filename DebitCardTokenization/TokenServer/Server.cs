@@ -131,57 +131,75 @@ namespace TokenServer
 
         // Exports all Card <-> Token pairs to a text file, sorted by Card ID
         // Accepts an Action that opens the SaveFileDialog from the UI Thread
-        public void ExportSortedByCard(Action<object> DialogShower)
+        public bool ExportSortedByCard()
         {
             string fileName = String.Empty;
             using(System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog())
             {
-                DialogShower(dialog);
+                dialog.ShowDialog(); 
+                if (dialog.FileName == String.Empty)
+                    return false;
+
                 fileName = dialog.FileName;
             }
-
-            FileStream output = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-            StreamWriter writer = new StreamWriter(output);
-
-            IEnumerable<BankCard> sorted = bankCards.OrderBy(card => card.ID);
-            foreach (BankCard card in sorted)
+            try
             {
-                foreach (Token token in card.Tokens)
-                    writer.WriteLine(String.Format(Constants.CARD_VS_TOKEN, card.ID, token.ID));
+                using (FileStream output = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                using (StreamWriter writer = new StreamWriter(output))
+                {
+                    IEnumerable<BankCard> sorted = bankCards.OrderBy(card => card.ID);
+                    foreach (BankCard card in sorted)
+                    {
+                        foreach (Token token in card.Tokens)
+                            writer.WriteLine(String.Format(Constants.CARD_VS_TOKEN, card.ID, token.ID));
+                    }
+                }
             }
-            writer.Close();
-            output.Close();
+            catch(Exception e)
+            {
+                DisplayMethod(e.Message);
+                return false;
+            }
+            return true;
             
         }
 
         // Exports all Token <-> Card pairs to a text file, sorted by Token ID
-        // Accepts an Action that opens the SaveFileDialog from the UI Thread
-        public void ExportSortedByToken(Action<object> DialogShower)
+        public bool ExportSortedByToken()
         {
             string fileName = String.Empty;
             using (System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog())
             {
-                DialogShower(dialog);
+                dialog.ShowDialog();
+                if (dialog.FileName == String.Empty)
+                    return false;
+
                 fileName = dialog.FileName;
             }
-
-            FileStream output = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-            StreamWriter writer = new StreamWriter(output);
-
-            List<Token> tokens = new List<Token>();
-
-            foreach (BankCard card in bankCards)
+            try
             {
-                foreach (Token token in card.Tokens)
-                    tokens.Add(token);
+                using (FileStream output = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                using (StreamWriter writer = new StreamWriter(output))
+                {
+                    List<Token> tokens = new List<Token>();
+
+                    foreach (BankCard card in bankCards)
+                    {
+                        foreach (Token token in card.Tokens)
+                            tokens.Add(token);
+                    }
+                    IEnumerable<Token> sorted = tokens.OrderBy(token => token.ID);
+
+                    foreach (Token token in sorted)
+                        writer.WriteLine(String.Format(Constants.TOKEN_VS_CARD, token.ID, token.Owner));
+                }
             }
-            IEnumerable<Token> sorted = tokens.OrderBy(token => token.ID);
-
-            foreach (Token token in sorted)
-                writer.WriteLine(String.Format(Constants.TOKEN_VS_CARD, token.ID, token.Owner));
-
-            writer.Close();
-            output.Close();
+            catch(Exception e)
+            {
+                DisplayMethod(e.Message);
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -33,16 +33,26 @@ namespace TokenClient
         public void RequestToken(string from)
         {
             writer.Write((int)Activity.REGISTER_TOKEN);
-            writer.Write(from);
-            DisplayMessage(reader.ReadString());
+            if ((Activity)reader.ReadInt32() == Activity.DENIED)
+                DisplayMessage(Constants.ACCESS_DENIED);
+            else
+            {
+                writer.Write(from);
+                DisplayMessage(reader.ReadString());
+            }
         }
 
         // Requests card ID from the server
         public void RequestCardID(string from)
         {
             writer.Write((int)Activity.REQUEST_CARD);
-            writer.Write(from);
-            DisplayMessage(reader.ReadString());
+            if ((Activity)reader.ReadInt32() == Activity.DENIED)
+                DisplayMessage(Constants.ACCESS_DENIED);
+            else
+            {
+                writer.Write(from);
+                DisplayMessage(reader.ReadString());
+            }
         }
 
         // Connects to the server

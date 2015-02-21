@@ -26,18 +26,7 @@ namespace TokenServer
 
         public void Export()
         {
-            server.ExportSortedByToken(DisplayDialog);
-        }
-
-        public void DisplayDialog(object dialog)
-        {
-            if (!Dispatcher.CheckAccess())
-                Dispatcher.Invoke(new Action<object>(DisplayDialog), dialog);
-            else
-            {
-                System.Windows.Forms.SaveFileDialog dial = dialog as System.Windows.Forms.SaveFileDialog;
-                dial.ShowDialog();
-            }
+            server.ExportSortedByToken();
         }
 
         public void DisplayError(object message)
@@ -63,14 +52,14 @@ namespace TokenServer
 
         private void btnExportCardID_Click(object sender, RoutedEventArgs e)
         {
-            server.ExportSortedByCard(DisplayDialog);
-            MessageBox.Show("Export Successful", "OK", MessageBoxButton.OK, MessageBoxImage.Information);
+            if(server.ExportSortedByCard())
+                MessageBox.Show("Export Successful", "OK", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void btnExportToken_Click(object sender, RoutedEventArgs e)
         {
-            server.ExportSortedByToken(DisplayDialog);
-            MessageBox.Show("Export Successful", "OK", MessageBoxButton.OK, MessageBoxImage.Information);
+            if(server.ExportSortedByToken())
+                MessageBox.Show("Export Successful", "OK", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void btnSerialize_Click(object sender, RoutedEventArgs e)

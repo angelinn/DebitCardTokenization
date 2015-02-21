@@ -50,21 +50,37 @@ namespace TokenClient
 
         private void ucLogin_Login(object sender, LoginUserControl.LoginEventArgs args)
         {
-            if(client.LogIn(args.Username, args.Password))
-                ShowRequestUC();
+            try
+            {
+                if (client.LogIn(args.Username, args.Password))
+                    ShowRequestUC();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, Constants.FATAL_ERROR, MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Environment.Exit(System.Environment.ExitCode);
+            } 
         }
 
         private void ucLogin_Register(object sender, LoginUserControl.LoginEventArgs args)
         {
-            if (!client.IsUsernameValid(args.Username))
-                MessageBox.Show(Constants.USERNAME_INCORRECT, Constants.INCORRECT_TITLE,
-                                MessageBoxButton.OK, MessageBoxImage.Information);
-            if(args.ListBoxMarked == -1)
-                MessageBox.Show(Constants.ACCESS_NOT_SELECTED, Constants.INCORRECT_TITLE,
-                                MessageBoxButton.OK, MessageBoxImage.Information);  
+            try
+            {
+                if (!client.IsUsernameValid(args.Username))
+                    MessageBox.Show(Constants.USERNAME_INCORRECT, Constants.INCORRECT_TITLE,
+                                    MessageBoxButton.OK, MessageBoxImage.Information);
+                else if (args.ListBoxMarked == -1)
+                    MessageBox.Show(Constants.ACCESS_NOT_SELECTED, Constants.INCORRECT_TITLE,
+                                    MessageBoxButton.OK, MessageBoxImage.Information);
 
-            else if(client.Register(args.Username, args.Password, (AccessLevel)args.ListBoxMarked))
-                ShowRequestUC();
+                else if (client.Register(args.Username, args.Password, (AccessLevel)args.ListBoxMarked))
+                    ShowRequestUC();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, Constants.FATAL_ERROR, MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Environment.Exit(System.Environment.ExitCode);
+            }
         }
 
        
@@ -76,12 +92,28 @@ namespace TokenClient
 
         private void ucRequest_TokenRequested(object sender, TokenProcessorUserControl.GenerateEventArgs args)
         {
-            client.RequestToken(args.From);
+            try
+            {
+                client.RequestToken(args.From);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, Constants.FATAL_ERROR, MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Environment.Exit(System.Environment.ExitCode);
+            }
         }
 
         private void ucRequest_CardIDRequested(object sender, TokenProcessorUserControl.GenerateEventArgs args)
         {
-            client.RequestCardID(args.From);
+            try
+            {
+                client.RequestCardID(args.From);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, Constants.FATAL_ERROR, MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Environment.Exit(System.Environment.ExitCode);
+            }
         }
 
     }

@@ -64,7 +64,7 @@ namespace TokenServer
         // Checks if a given Card ID is valid
         private static bool IsIDValid(string ID)
         {
-            return ID.Length != Constants.VALID_CARD_LENGTH && 
+            return ID.Length == Constants.VALID_CARD_LENGTH && 
                    !IsNewStartDigitValid(Convert.ToInt32(ID[0].ToString())) && 
                    LuhnTest(ID);
         }

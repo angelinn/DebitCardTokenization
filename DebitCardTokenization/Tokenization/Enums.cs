@@ -24,6 +24,8 @@ namespace Tokenization
         // e.g Register an account, Login, Request Token and Request Card ID
         public enum Activity
         {
+            ACCEPTED = 8000,
+            DENIED = 10000,
             REGISTER = 12000,
             LOGIN = 14000,
             REGISTER_TOKEN = 15000,
