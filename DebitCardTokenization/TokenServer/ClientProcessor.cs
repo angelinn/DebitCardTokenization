@@ -127,7 +127,7 @@ namespace TokenServer
                     return;
                 }
 
-                AddToList<BankCard>(bankCardsRef, new BankCard(ID, new Token(token)));
+                AddToList<BankCard>(bankCardsRef, new BankCard(ID, new Token(token, ID)));
                 writer.Write(token);
                 DisplayMethod(String.Format("{0} created Token {1}", client.Username, token));
             }

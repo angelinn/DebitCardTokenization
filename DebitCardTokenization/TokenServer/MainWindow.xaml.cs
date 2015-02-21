@@ -24,6 +24,22 @@ namespace TokenServer
             server = new Server(DisplayMessage, DisplayError);
         }
 
+        public void Export()
+        {
+            server.ExportSortedByToken(DisplayDialog);
+        }
+
+        public void DisplayDialog(object dialog)
+        {
+            if (!Dispatcher.CheckAccess())
+                Dispatcher.Invoke(new Action<object>(DisplayDialog), dialog);
+            else
+            {
+                System.Windows.Forms.SaveFileDialog dial = dialog as System.Windows.Forms.SaveFileDialog;
+                dial.ShowDialog();
+            }
+        }
+
         public void DisplayError(object message)
         {
             if (!Dispatcher.CheckAccess())
@@ -43,6 +59,24 @@ namespace TokenServer
         private void Window_Closed(object sender, EventArgs e)
         {
             System.Environment.Exit(System.Environment.ExitCode);
+        }
+
+        private void btnExportCardID_Click(object sender, RoutedEventArgs e)
+        {
+            server.ExportSortedByCard(DisplayDialog);
+            MessageBox.Show("Export Successful", "OK", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void btnExportToken_Click(object sender, RoutedEventArgs e)
+        {
+            server.ExportSortedByToken(DisplayDialog);
+            MessageBox.Show("Export Successful", "OK", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void btnSerialize_Click(object sender, RoutedEventArgs e)
+        {
+            server.Serialize();
+            MessageBox.Show("Serialization successful.", "OK", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
     }

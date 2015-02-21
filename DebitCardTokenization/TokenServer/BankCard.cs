@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace TokenServer
 {
+    [Serializable]
     public class BankCard
     {
         private string id;

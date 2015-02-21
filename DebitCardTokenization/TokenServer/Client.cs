@@ -8,6 +8,7 @@ using Tokenization.Access;
 
 namespace TokenServer
 {
+    [Serializable]
     public class Client
     {
         private string username;

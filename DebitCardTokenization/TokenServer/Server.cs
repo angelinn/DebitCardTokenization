@@ -7,6 +7,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Net;
 using System.IO;
+using wox.serial;
 
 namespace TokenServer
 {
@@ -28,6 +29,11 @@ namespace TokenServer
             Load();
         }
 
+        ~Server()
+        {
+            Serialize();
+        }
+
         public void Load()
         {
             clients = new List<Client>();
@@ -36,7 +42,7 @@ namespace TokenServer
 
             readThread = new Thread(new ThreadStart(RunServer));
             readThread.Start();
-            // deserialize data - Cards and Clients
+            Deserialize();
         }
 
         private void RunServer()
@@ -63,6 +69,65 @@ namespace TokenServer
             {
                 DisplayError(e.Message);
             }
+        }
+
+        public void Serialize()
+        {
+            Easy.save(bankCards, "C:\\users\\angelin\\desktop\\cards.xml");
+            Easy.save(clients, "C:\\users\\angelin\\desktop\\clients.xml");
+        }
+
+        private void Deserialize()
+        {
+            object someth = Easy.load("C:\\users\\angelin\\desktop\\cards.xml");
+            clients = (List<Client>)Easy.load("C:\\users\\angelin\\desktop\\clients.xml");
+        }
+
+        public void ExportSortedByCard(Action<object> DialogShower)
+        {
+            System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog();
+
+            dialog.DefaultExt = ".txt";
+            DialogShower(dialog);
+
+            FileStream output = new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write);
+            StreamWriter writer = new StreamWriter(output);
+
+            IEnumerable<BankCard> sorted = bankCards.OrderBy(card => card.ID);
+            foreach (BankCard card in sorted)
+            {
+                foreach (Token token in card.Tokens)
+                    writer.WriteLine(String.Format("Token: {0} < - > {1} :Card", card.ID, token.ID));
+            }
+            writer.Close();
+            output.Close();
+            
+        }
+
+        public void ExportSortedByToken(Action<object> DialogShower)
+        {
+            System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog();
+
+            dialog.DefaultExt = ".txt";
+            DialogShower(dialog);
+
+            FileStream output = new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write);
+            StreamWriter writer = new StreamWriter(output);
+
+            List<Token> tokens = new List<Token>();
+
+            foreach (BankCard card in bankCards)
+            {
+                foreach (Token token in card.Tokens)
+                    tokens.Add(token);
+            }
+            IEnumerable<Token> sorted = tokens.OrderBy(token => token.ID);
+
+            foreach (Token token in sorted)
+                writer.WriteLine(String.Format("Token: {0} < - > {1} :Card", token.ID, token.Owner));
+
+            writer.Close();
+            output.Close();
         }
     }
 }

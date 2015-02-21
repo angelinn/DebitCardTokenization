@@ -9,7 +9,7 @@ namespace TokenServer
     public class Token
     {
         private string id;
-        private BankCard owner;
+        private string owner;
 
         public string ID
         {
@@ -26,7 +26,7 @@ namespace TokenServer
             }
         }
 
-        public BankCard Owner
+        public string Owner
         {
             get
             {
@@ -39,9 +39,10 @@ namespace TokenServer
             }
         }
 
-        public Token(string numbers)
+        public Token(string numbers, string own)
         {
             ID = numbers;
+            Owner = own;
         }
     }
 }
